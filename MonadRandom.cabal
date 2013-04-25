@@ -1,0 +1,13 @@
+Name:                MonadRandom
+Build-type:          Simple
+Version:             0.1.8
+Synopsis:            Random-number generation monad.
+Description:         Support for computations which consume random values.
+License:             OtherLicense
+License-file:        LICENSE
+Category:            Control
+Author:              Cale Gibbard and others
+Maintainer:          
+Stability:           experimental
+Build-Depends:       base >=2 && < 5, mtl, random
+Exposed-modules:     Control.Monad.Random.Class, Control.Monad.Random
