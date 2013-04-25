@@ -1,13 +1,20 @@
-Name:                MonadRandom
-Build-type:          Simple
-Version:             0.1.9
-Synopsis:            Random-number generation monad.
-Description:         Support for computations which consume random values.
-License:             OtherLicense
-License-file:        LICENSE
-Category:            Control
-Author:              Cale Gibbard and others
-Maintainer:          Brent Yorgey <byorgey@gmail.com>
-Stability:           experimental
-Build-Depends:       base >=2 && < 5, mtl, random
-Exposed-modules:     Control.Monad.Random.Class, Control.Monad.Random
+name:                MonadRandom
+version:             0.1.9
+synopsis:            Random-number generation monad.
+description:         Support for computations which consume random values.
+license:             OtherLicense
+license-file:        LICENSE
+author:              Cale Gibbard and others
+maintainer:          Brent Yorgey <byorgey@gmail.com>
+bug-reports:         https://github.com/byorgey/MonadRandom/issues
+category:            Control
+build-type:          Simple
+cabal-version:       >=1.8
+extra-source-files:  CHANGES.markdown
+source-repository head
+  type:     git
+  location: git://github.com/byorgey/MonadRandom.git
+
+library
+  exposed-modules:     Control.Monad.Random, Control.Monad.Random.Class
+  build-depends:       base >= 2 && < 5, mtl, random
