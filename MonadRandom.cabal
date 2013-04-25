@@ -7,7 +7,7 @@ License:             OtherLicense
 License-file:        LICENSE
 Category:            Control
 Author:              Cale Gibbard and others
-Maintainer:          
+Maintainer:          Brent Yorgey <byorgey@gmail.com>
 Stability:           experimental
 Build-Depends:       base >=2 && < 5, mtl, random
 Exposed-modules:     Control.Monad.Random.Class, Control.Monad.Random
