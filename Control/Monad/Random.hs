@@ -91,7 +91,7 @@ runRandT (RandT x) g = runStateT x g
 
 -- | A basic random monad.
 newtype Rand g a = Rand (RandT g Identity a)
-    deriving (Functor, Applicative, Monad, MonadRandom, MonadSplit g, MonadFix, MonadPlus)
+    deriving (Functor, Applicative, Monad, MonadRandom, MonadSplit g, MonadFix)
 
 -- | Evaluate a random computation using the generator @g@.  Note that the
 -- generator @g@ is not returned, so there's no way to recover the
