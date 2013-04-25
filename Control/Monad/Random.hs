@@ -56,7 +56,7 @@ import           System.Random
 -- | A monad transformer which adds a random number generator to an
 -- existing monad.
 newtype RandT g m a = RandT (StateT g m a)
-    deriving (Functor, Monad, MonadTrans, MonadIO, MonadFix)
+    deriving (Functor, Monad, MonadTrans, MonadIO, MonadFix, MonadPlus)
 
 instance (Functor m,Monad m) => Applicative (RandT g m) where
   pure = return
@@ -91,7 +91,7 @@ runRandT (RandT x) g = runStateT x g
 
 -- | A basic random monad.
 newtype Rand g a = Rand (RandT g Identity a)
-    deriving (Functor, Applicative, Monad, MonadRandom, MonadSplit g, MonadFix)
+    deriving (Functor, Applicative, Monad, MonadRandom, MonadSplit g, MonadFix, MonadPlus)
 
 -- | Evaluate a random computation using the generator @g@.  Note that the
 -- generator @g@ is not returned, so there's no way to recover the
