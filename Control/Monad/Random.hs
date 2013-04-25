@@ -1,6 +1,7 @@
-{-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE FlexibleInstances, UndecidableInstances #-}
+{-# LANGUAGE FlexibleInstances          #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE MultiParamTypeClasses      #-}
+{-# LANGUAGE UndecidableInstances       #-}
 {-# OPTIONS -fno-warn-orphans #-}
 
 {- |
@@ -40,17 +41,17 @@ module Control.Monad.Random (
     -- $RandExample
     ) where
 
-import System.Random
-import Control.Monad()
-import Control.Monad.Error
-import Control.Monad.Identity
-import Control.Monad.Random.Class
-import Control.Monad.Reader
-import Control.Monad.State
-import Control.Monad.Trans()
-import Control.Monad.Writer
-import Control.Arrow
-import Control.Applicative
+import           Control.Applicative
+import           Control.Arrow
+import           Control.Monad              ()
+import           Control.Monad.Error
+import           Control.Monad.Identity
+import           Control.Monad.Random.Class
+import           Control.Monad.Reader
+import           Control.Monad.State
+import           Control.Monad.Trans        ()
+import           Control.Monad.Writer
+import           System.Random
 
 -- | A monad transformer which adds a random number generator to an
 -- existing monad.
