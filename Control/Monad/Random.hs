@@ -50,6 +50,7 @@ import           Control.Monad.Random.Class
 import           Control.Monad.Reader
 import           Control.Monad.State
 import           Control.Monad.Trans        ()
+import           Control.Monad.Trans.Maybe
 import           Control.Monad.Writer
 import           System.Random
 
@@ -145,6 +146,12 @@ instance (Error e, MonadRandom m) => MonadRandom (ErrorT e m) where
     getRandoms = lift getRandoms
     getRandomRs = lift . getRandomRs
 
+instance (MonadRandom m) => MonadRandom (MaybeT m) where
+    getRandom = lift getRandom
+    getRandomR = lift . getRandomR
+    getRandoms = lift getRandoms
+    getRandomRs = lift . getRandomRs
+
 instance (MonadSplit g m) => MonadSplit g (StateT s m) where
     getSplit = lift getSplit
 
@@ -155,6 +162,9 @@ instance (MonadSplit g m) => MonadSplit g (ReaderT r m) where
     getSplit = lift getSplit
 
 instance (Error e, MonadSplit g m) => MonadSplit g (ErrorT e m) where
+    getSplit = lift getSplit
+
+instance (MonadSplit g m) => MonadSplit g (MaybeT m) where
     getSplit = lift getSplit
 
 instance (MonadState s m, RandomGen g) => MonadState s (RandT g m) where
