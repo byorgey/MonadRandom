@@ -56,7 +56,7 @@ import           System.Random
 -- | A monad transformer which adds a random number generator to an
 -- existing monad.
 newtype RandT g m a = RandT (StateT g m a)
-    deriving (Functor, Monad, MonadTrans, MonadIO, MonadFix, MonadPlus)
+    deriving (Functor, Monad, MonadTrans, MonadIO, MonadFix)
 
 instance (Functor m,Monad m) => Applicative (RandT g m) where
   pure = return
