@@ -44,6 +44,7 @@ module Control.Monad.Random (
 import           Control.Applicative
 import           Control.Arrow
 import           Control.Monad              ()
+import           Control.Monad.Cont
 import           Control.Monad.Error
 import           Control.Monad.Identity
 import           Control.Monad.Random.Class
@@ -152,6 +153,12 @@ instance (MonadRandom m) => MonadRandom (MaybeT m) where
     getRandoms = lift getRandoms
     getRandomRs = lift . getRandomRs
 
+instance MonadRandom m => MonadRandom (ContT r m) where
+    getRandom = lift getRandom
+    getRandomR = lift . getRandomR
+    getRandoms = lift getRandoms
+    getRandomRs = lift . getRandomRs
+
 instance (MonadSplit g m) => MonadSplit g (StateT s m) where
     getSplit = lift getSplit
 
@@ -165,6 +172,9 @@ instance (Error e, MonadSplit g m) => MonadSplit g (ErrorT e m) where
     getSplit = lift getSplit
 
 instance (MonadSplit g m) => MonadSplit g (MaybeT m) where
+    getSplit = lift getSplit
+
+instance (MonadSplit g m) => MonadSplit g (ContT r m) where
     getSplit = lift getSplit
 
 instance (MonadState s m, RandomGen g) => MonadState s (RandT g m) where
