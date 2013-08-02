@@ -51,6 +51,7 @@ import           Control.Monad.Random.Class
 import           Control.Monad.Reader
 import           Control.Monad.State
 import           Control.Monad.Trans        ()
+import           Control.Monad.Trans.Identity
 import           Control.Monad.Trans.Maybe
 import           Control.Monad.Writer
 import           System.Random
@@ -122,6 +123,12 @@ fromList xs = do
       cs = scanl1 (\(_,q) (y,s') -> (y, s'+q)) xs       -- cumulative weight
   p <- liftM toRational $ getRandomR (0.0,s)
   return . fst . head $ dropWhile (\(_,q) -> q < p) cs
+
+instance (MonadRandom m) => MonadRandom (IdentityT m) where
+    getRandom = lift getRandom
+    getRandomR = lift . getRandomR
+    getRandoms = lift getRandoms
+    getRandomRs = lift . getRandomRs
 
 instance (MonadRandom m) => MonadRandom (StateT s m) where
     getRandom = lift getRandom
