@@ -59,7 +59,7 @@ import           System.Random
 -- | A monad transformer which adds a random number generator to an
 -- existing monad.
 newtype RandT g m a = RandT (StateT g m a)
-    deriving (Functor, Monad, MonadTrans, MonadIO, MonadFix)
+    deriving (Functor, Monad, MonadTrans, MonadIO, MonadFix, MonadReader r, MonadWriter w)
 
 instance (Functor m,Monad m) => Applicative (RandT g m) where
   pure = return
@@ -190,15 +190,6 @@ instance (MonadSplit g m) => MonadSplit g (ContT r m) where
 instance (MonadState s m, RandomGen g) => MonadState s (RandT g m) where
     get = lift get
     put = lift . put
-
-instance (MonadReader r m, RandomGen g) => MonadReader r (RandT g m) where
-    ask = lift ask
-    local f (RandT m) = RandT $ local f m
-
-instance (MonadWriter w m, RandomGen g, Monoid w) => MonadWriter w (RandT g m) where
-    tell = lift . tell
-    listen (RandT m) = RandT $ listen m
-    pass (RandT m) = RandT $ pass m
 
 instance MonadRandom IO where
     getRandom = randomIO
