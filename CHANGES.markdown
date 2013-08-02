@@ -1,3 +1,10 @@
+0.1.11 (1 August 2013)
+----------------------
+
+  - add MonadRandom and MonadSplit instances for IdentityT
+  - derive MonadReader and MonadWriter instances instead of declaring
+    them explicitly (thanks again to James Koppel)
+
 0.1.10 (16 July 2013)
 ---------------------
 
