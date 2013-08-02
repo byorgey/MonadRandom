@@ -51,6 +51,7 @@ import           Control.Monad.Random.Class
 import           Control.Monad.Reader
 import           Control.Monad.State
 import           Control.Monad.Trans        ()
+import           Control.Monad.Trans.Identity
 import           Control.Monad.Trans.Maybe
 import           Control.Monad.Writer
 import           System.Random
@@ -58,7 +59,7 @@ import           System.Random
 -- | A monad transformer which adds a random number generator to an
 -- existing monad.
 newtype RandT g m a = RandT (StateT g m a)
-    deriving (Functor, Monad, MonadTrans, MonadIO, MonadFix)
+    deriving (Functor, Monad, MonadTrans, MonadIO, MonadFix, MonadReader r, MonadWriter w)
 
 instance (Functor m,Monad m) => Applicative (RandT g m) where
   pure = return
@@ -123,6 +124,12 @@ fromList xs = do
   p <- liftM toRational $ getRandomR (0.0,s)
   return . fst . head $ dropWhile (\(_,q) -> q < p) cs
 
+instance (MonadRandom m) => MonadRandom (IdentityT m) where
+    getRandom = lift getRandom
+    getRandomR = lift . getRandomR
+    getRandoms = lift getRandoms
+    getRandomRs = lift . getRandomRs
+
 instance (MonadRandom m) => MonadRandom (StateT s m) where
     getRandom = lift getRandom
     getRandomR = lift . getRandomR
@@ -159,6 +166,9 @@ instance MonadRandom m => MonadRandom (ContT r m) where
     getRandoms = lift getRandoms
     getRandomRs = lift . getRandomRs
 
+instance (MonadSplit g m) => MonadSplit g (IdentityT m) where
+    getSplit = lift getSplit
+
 instance (MonadSplit g m) => MonadSplit g (StateT s m) where
     getSplit = lift getSplit
 
@@ -180,15 +190,6 @@ instance (MonadSplit g m) => MonadSplit g (ContT r m) where
 instance (MonadState s m, RandomGen g) => MonadState s (RandT g m) where
     get = lift get
     put = lift . put
-
-instance (MonadReader r m, RandomGen g) => MonadReader r (RandT g m) where
-    ask = lift ask
-    local f (RandT m) = RandT $ local f m
-
-instance (MonadWriter w m, RandomGen g, Monoid w) => MonadWriter w (RandT g m) where
-    tell = lift . tell
-    listen (RandT m) = RandT $ listen m
-    pass (RandT m) = RandT $ pass m
 
 instance MonadRandom IO where
     getRandom = randomIO
