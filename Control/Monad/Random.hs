@@ -166,6 +166,9 @@ instance MonadRandom m => MonadRandom (ContT r m) where
     getRandoms = lift getRandoms
     getRandomRs = lift . getRandomRs
 
+instance (MonadSplit g m) => MonadSplit g (IdentityT m) where
+    getSplit = lift getSplit
+
 instance (MonadSplit g m) => MonadSplit g (StateT s m) where
     getSplit = lift getSplit
 
