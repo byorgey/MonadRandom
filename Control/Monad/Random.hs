@@ -36,7 +36,10 @@ module Control.Monad.Random (
     runRand,
     evalRandIO,
     fromList,
-    Rand, RandT -- but not the data constructors
+    Rand, RandT, -- but not the data constructors
+    -- * Special lift functions
+    liftRand,
+    liftRandT
     -- * Example
     -- $RandExample
     ) where
@@ -70,6 +73,18 @@ liftState t = do v <- get
                  let (x, v') = t v
                  put v'
                  return x
+
+-- | Lift arbitrary action to RandT
+liftRandT :: (Monad m, RandomGen g, Random a) =>
+             (g -> m (a, g)) -- ^ action returning value and new generator state
+             -> RandT g m a
+liftRandT = RandT . StateT
+
+-- | Lift arbitrary action to Rand
+liftRand :: (RandomGen g, Random a) =>
+            (g -> (a, g)) -- ^ action returning value and new generator state
+            -> Rand g a
+liftRand = Rand . RandT . liftState
 
 instance (Monad m, RandomGen g) => MonadRandom (RandT g m) where
     getRandom = RandT . liftState $ random
