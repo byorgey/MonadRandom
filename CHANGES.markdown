@@ -1,3 +1,9 @@
+0.1.12 (30 September 2013)
+--------------------------
+
+  - add liftRandT and liftRand functions, for lifting explicit
+    generator-passing functions into RandT and Rand, respectively.
+
 0.1.11 (1 August 2013)
 ----------------------
 
