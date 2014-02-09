@@ -1,3 +1,9 @@
+0.1.13 (9 February 2014)
+------------------------
+
+  - add simple 'uniform' function for creating a uniform distribution
+    over a list of values
+
 0.1.12 (30 September 2013)
 --------------------------
 
