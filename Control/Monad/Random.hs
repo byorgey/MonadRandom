@@ -36,6 +36,7 @@ module Control.Monad.Random (
     runRand,
     evalRandIO,
     fromList,
+    uniform,
     Rand, RandT, -- but not the data constructors
     -- * Special lift functions
     liftRand,
@@ -138,6 +139,10 @@ fromList xs = do
       cs = scanl1 (\(_,q) (y,s') -> (y, s'+q)) xs       -- cumulative weight
   p <- liftM toRational $ getRandomR (0.0,s)
   return . fst . head $ dropWhile (\(_,q) -> q < p) cs
+
+-- | Sample a value from a uniform distribution of a list of elements.
+uniform :: (MonadRandom m) => [a] -> m a
+uniform = fromList . fmap (flip (,) 1)
 
 instance (MonadRandom m) => MonadRandom (IdentityT m) where
     getRandom = lift getRandom
