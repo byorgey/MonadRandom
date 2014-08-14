@@ -93,7 +93,7 @@ liftRandT = RandT . StateT
 liftRand :: (RandomGen g, Random a) =>
             (g -> (a, g)) -- ^ action returning value and new generator state
             -> Rand g a
-liftRand = Rand . RandT . liftState
+liftRand = RandT . liftState
 
 instance (Monad m, RandomGen g) => MonadRandom (RandT g m) where
     getRandom = RandT . liftState $ random
@@ -117,19 +117,18 @@ runRandT  :: (Monad m, RandomGen g) => RandT g m a -> g -> m (a, g)
 runRandT (RandT x) g = runStateT x g
 
 -- | A basic random monad.
-newtype Rand g a = Rand (RandT g Identity a)
-    deriving (Functor, Applicative, Monad, MonadRandom, MonadSplit g, MonadFix)
+type Rand g a = RandT g Identity a
 
 -- | Evaluate a random computation using the generator @g@.  Note that the
 -- generator @g@ is not returned, so there's no way to recover the
 -- updated version of @g@.
 evalRand :: (RandomGen g) => Rand g a -> g -> a
-evalRand (Rand x) g = runIdentity (evalRandT x g)
+evalRand x g = runIdentity (evalRandT x g)
 
 -- | Run a random computation using the generator @g@, returning the result
 -- and the updated generator.
 runRand :: (RandomGen g) => Rand g a -> g -> (a, g)
-runRand (Rand x) g = runIdentity (runRandT x g)
+runRand x g = runIdentity (runRandT x g)
 
 -- | Evaluate a random computation in the IO monad, splitting the global standard generator to get a new one for the computation.
 evalRandIO :: Rand StdGen a -> IO a
