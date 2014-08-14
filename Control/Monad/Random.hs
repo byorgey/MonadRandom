@@ -260,7 +260,7 @@ instance (MonadSplit g m) => MonadSplit g (MaybeT m) where
 instance (MonadSplit g m) => MonadSplit g (ContT r m) where
     getSplit = lift getSplit
 
-instance (MonadState s m, RandomGen g) => MonadState s (RandT g m) where
+instance (MonadState s m) => MonadState s (RandT g m) where
     get = lift get
     put = lift . put
 
