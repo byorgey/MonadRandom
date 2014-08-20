@@ -9,3 +9,5 @@ cabal-dev
 dist_*
 .hsenv_*
 TAGS
+.cabal-sandbox
+cabal.sandbox.config
