@@ -17,5 +17,5 @@ source-repository head
 
 library
   exposed-modules:     Control.Monad.Random, Control.Monad.Random.Class
-  build-depends:       base >= 2 && < 5, transformers, mtl, random
+  build-depends:       base >= 2 && < 5, transformers >= 0.4, mtl, random
   ghc-options: -Wall
