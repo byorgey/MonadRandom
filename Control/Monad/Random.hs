@@ -47,17 +47,25 @@ module Control.Monad.Random (
 
 import           Control.Applicative
 import           Control.Arrow
-import           Control.Monad              ()
+import           Control.Monad                  ()
 import           Control.Monad.Cont
 import           Control.Monad.Error
+import           Control.Monad.Except
 import           Control.Monad.Identity
 import           Control.Monad.Random.Class
 import           Control.Monad.Reader
+import qualified Control.Monad.RWS.Lazy         as RWSL
+import qualified Control.Monad.RWS.Strict       as RWSS
 import           Control.Monad.State
-import           Control.Monad.Trans        ()
+import qualified Control.Monad.State.Lazy       as SL
+import qualified Control.Monad.State.Strict     as SS
+import           Control.Monad.Trans            ()
 import           Control.Monad.Trans.Identity
 import           Control.Monad.Trans.Maybe
-import           Control.Monad.Writer
+import           Control.Monad.Writer.Class
+import qualified Control.Monad.Writer.Lazy      as WL
+import qualified Control.Monad.Writer.Strict    as WS
+import           Data.Monoid                    (Monoid)
 import           System.Random
 
 -- | A monad transformer which adds a random number generator to an
@@ -85,7 +93,7 @@ liftRandT = RandT . StateT
 liftRand :: (RandomGen g, Random a) =>
             (g -> (a, g)) -- ^ action returning value and new generator state
             -> Rand g a
-liftRand = Rand . RandT . liftState
+liftRand = RandT . liftState
 
 instance (Monad m, RandomGen g) => MonadRandom (RandT g m) where
     getRandom = RandT . liftState $ random
@@ -109,19 +117,18 @@ runRandT  :: (Monad m, RandomGen g) => RandT g m a -> g -> m (a, g)
 runRandT (RandT x) g = runStateT x g
 
 -- | A basic random monad.
-newtype Rand g a = Rand (RandT g Identity a)
-    deriving (Functor, Applicative, Monad, MonadRandom, MonadSplit g, MonadFix)
+type Rand g a = RandT g Identity a
 
 -- | Evaluate a random computation using the generator @g@.  Note that the
 -- generator @g@ is not returned, so there's no way to recover the
 -- updated version of @g@.
 evalRand :: (RandomGen g) => Rand g a -> g -> a
-evalRand (Rand x) g = runIdentity (evalRandT x g)
+evalRand x g = runIdentity (evalRandT x g)
 
 -- | Run a random computation using the generator @g@, returning the result
 -- and the updated generator.
 runRand :: (RandomGen g) => Rand g a -> g -> (a, g)
-runRand (Rand x) g = runIdentity (runRandT x g)
+runRand x g = runIdentity (runRandT x g)
 
 -- | Evaluate a random computation in the IO monad, splitting the global standard generator to get a new one for the computation.
 evalRandIO :: Rand StdGen a -> IO a
@@ -150,13 +157,25 @@ instance (MonadRandom m) => MonadRandom (IdentityT m) where
     getRandoms = lift getRandoms
     getRandomRs = lift . getRandomRs
 
-instance (MonadRandom m) => MonadRandom (StateT s m) where
+instance (MonadRandom m) => MonadRandom (SL.StateT s m) where
     getRandom = lift getRandom
     getRandomR = lift . getRandomR
     getRandoms = lift getRandoms
     getRandomRs = lift . getRandomRs
 
-instance (MonadRandom m, Monoid w) => MonadRandom (WriterT w m) where
+instance (MonadRandom m) => MonadRandom (SS.StateT s m) where
+    getRandom = lift getRandom
+    getRandomR = lift . getRandomR
+    getRandoms = lift getRandoms
+    getRandomRs = lift . getRandomRs
+
+instance (MonadRandom m, Monoid w) => MonadRandom (WL.WriterT w m) where
+    getRandom = lift getRandom
+    getRandomR = lift . getRandomR
+    getRandoms = lift getRandoms
+    getRandomRs = lift . getRandomRs
+
+instance (MonadRandom m, Monoid w) => MonadRandom (WS.WriterT w m) where
     getRandom = lift getRandom
     getRandomR = lift . getRandomR
     getRandoms = lift getRandoms
@@ -168,7 +187,25 @@ instance (MonadRandom m) => MonadRandom (ReaderT r m) where
     getRandoms = lift getRandoms
     getRandomRs = lift . getRandomRs
 
+instance (MonadRandom m, Monoid w) => MonadRandom (RWSL.RWST r w s m) where
+    getRandom = lift getRandom
+    getRandomR = lift . getRandomR
+    getRandoms = lift getRandoms
+    getRandomRs = lift . getRandomRs
+
+instance (MonadRandom m, Monoid w) => MonadRandom (RWSS.RWST r w s m) where
+    getRandom = lift getRandom
+    getRandomR = lift . getRandomR
+    getRandoms = lift getRandoms
+    getRandomRs = lift . getRandomRs
+
 instance (Error e, MonadRandom m) => MonadRandom (ErrorT e m) where
+    getRandom = lift getRandom
+    getRandomR = lift . getRandomR
+    getRandoms = lift getRandoms
+    getRandomRs = lift . getRandomRs
+
+instance (MonadRandom m) => MonadRandom (ExceptT e m) where
     getRandom = lift getRandom
     getRandomR = lift . getRandomR
     getRandoms = lift getRandoms
@@ -189,16 +226,31 @@ instance MonadRandom m => MonadRandom (ContT r m) where
 instance (MonadSplit g m) => MonadSplit g (IdentityT m) where
     getSplit = lift getSplit
 
-instance (MonadSplit g m) => MonadSplit g (StateT s m) where
+instance (MonadSplit g m) => MonadSplit g (SL.StateT s m) where
     getSplit = lift getSplit
 
-instance (MonadSplit g m, Monoid w) => MonadSplit g (WriterT w m) where
+instance (MonadSplit g m) => MonadSplit g (SS.StateT s m) where
+    getSplit = lift getSplit
+
+instance (MonadSplit g m, Monoid w) => MonadSplit g (WL.WriterT w m) where
+    getSplit = lift getSplit
+
+instance (MonadSplit g m, Monoid w) => MonadSplit g (WS.WriterT w m) where
     getSplit = lift getSplit
 
 instance (MonadSplit g m) => MonadSplit g (ReaderT r m) where
     getSplit = lift getSplit
 
+instance (MonadSplit g m, Monoid w) => MonadSplit g (RWSL.RWST r w s m) where
+    getSplit = lift getSplit
+
+instance (MonadSplit g m, Monoid w) => MonadSplit g (RWSS.RWST r w s m) where
+    getSplit = lift getSplit
+
 instance (Error e, MonadSplit g m) => MonadSplit g (ErrorT e m) where
+    getSplit = lift getSplit
+
+instance (MonadSplit g m) => MonadSplit g (ExceptT e m) where
     getSplit = lift getSplit
 
 instance (MonadSplit g m) => MonadSplit g (MaybeT m) where
@@ -207,7 +259,7 @@ instance (MonadSplit g m) => MonadSplit g (MaybeT m) where
 instance (MonadSplit g m) => MonadSplit g (ContT r m) where
     getSplit = lift getSplit
 
-instance (MonadState s m, RandomGen g) => MonadState s (RandT g m) where
+instance (MonadState s m) => MonadState s (RandT g m) where
     get = lift get
     put = lift . put
 
