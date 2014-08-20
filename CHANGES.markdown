@@ -1,3 +1,13 @@
+0.2 (20 August 2014)
+--------------------
+
+  - change `Rand` from a `newtype` to a type synonym
+  - `MonadRandom` and `MonadSplit` instances for
+      - `ExceptT`
+	  - strict variants of `StateT` and `WriterT`
+	  - both lazy and strict variants of `RWST`
+  - remove unneeded `RandomGen` constraint from `MonadState RandT` instance
+
 0.1.13 (9 February 2014)
 ------------------------
 
