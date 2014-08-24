@@ -1,3 +1,4 @@
+{-# LANGUAGE CPP                        #-}
 {-# LANGUAGE FlexibleInstances          #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE MultiParamTypeClasses      #-}
@@ -47,25 +48,28 @@ module Control.Monad.Random (
 
 import           Control.Applicative
 import           Control.Arrow
-import           Control.Monad                  ()
+import           Control.Monad                ()
 import           Control.Monad.Cont
-import           Control.Monad.Error
+#if MIN_VERSION_transformers(0,4,0)
 import           Control.Monad.Except
+#else
+import           Control.Monad.Error
+#endif
 import           Control.Monad.Identity
 import           Control.Monad.Random.Class
 import           Control.Monad.Reader
-import qualified Control.Monad.RWS.Lazy         as RWSL
-import qualified Control.Monad.RWS.Strict       as RWSS
+import qualified Control.Monad.RWS.Lazy       as RWSL
+import qualified Control.Monad.RWS.Strict     as RWSS
 import           Control.Monad.State
-import qualified Control.Monad.State.Lazy       as SL
-import qualified Control.Monad.State.Strict     as SS
-import           Control.Monad.Trans            ()
+import qualified Control.Monad.State.Lazy     as SL
+import qualified Control.Monad.State.Strict   as SS
+import           Control.Monad.Trans          ()
 import           Control.Monad.Trans.Identity
 import           Control.Monad.Trans.Maybe
 import           Control.Monad.Writer.Class
-import qualified Control.Monad.Writer.Lazy      as WL
-import qualified Control.Monad.Writer.Strict    as WS
-import           Data.Monoid                    (Monoid)
+import qualified Control.Monad.Writer.Lazy    as WL
+import qualified Control.Monad.Writer.Strict  as WS
+import           Data.Monoid                  (Monoid)
 import           System.Random
 
 -- | A monad transformer which adds a random number generator to an
@@ -199,13 +203,11 @@ instance (MonadRandom m, Monoid w) => MonadRandom (RWSS.RWST r w s m) where
     getRandoms = lift getRandoms
     getRandomRs = lift . getRandomRs
 
-instance (Error e, MonadRandom m) => MonadRandom (ErrorT e m) where
-    getRandom = lift getRandom
-    getRandomR = lift . getRandomR
-    getRandoms = lift getRandoms
-    getRandomRs = lift . getRandomRs
-
+#if MIN_VERSION_transformers(0,4,0)
 instance (MonadRandom m) => MonadRandom (ExceptT e m) where
+#else
+instance (Error e, MonadRandom m) => MonadRandom (ErrorT e m) where
+#endif
     getRandom = lift getRandom
     getRandomR = lift . getRandomR
     getRandoms = lift getRandoms
@@ -247,10 +249,11 @@ instance (MonadSplit g m, Monoid w) => MonadSplit g (RWSL.RWST r w s m) where
 instance (MonadSplit g m, Monoid w) => MonadSplit g (RWSS.RWST r w s m) where
     getSplit = lift getSplit
 
-instance (Error e, MonadSplit g m) => MonadSplit g (ErrorT e m) where
-    getSplit = lift getSplit
-
+#if MIN_VERSION_transformers(0,4,0)
 instance (MonadSplit g m) => MonadSplit g (ExceptT e m) where
+#else
+instance (Error e, MonadSplit g m) => MonadSplit g (ErrorT e m) where
+#endif
     getSplit = lift getSplit
 
 instance (MonadSplit g m) => MonadSplit g (MaybeT m) where
