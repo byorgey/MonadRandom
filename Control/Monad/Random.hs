@@ -88,13 +88,13 @@ liftState t = do v <- get
                  return x
 
 -- | Lift arbitrary action to RandT
-liftRandT :: (Monad m, RandomGen g, Random a) =>
+liftRandT :: (Monad m, RandomGen g) =>
              (g -> m (a, g)) -- ^ action returning value and new generator state
              -> RandT g m a
 liftRandT = RandT . StateT
 
 -- | Lift arbitrary action to Rand
-liftRand :: (RandomGen g, Random a) =>
+liftRand :: (RandomGen g) =>
             (g -> (a, g)) -- ^ action returning value and new generator state
             -> Rand g a
 liftRand = RandT . liftState
