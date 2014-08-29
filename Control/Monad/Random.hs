@@ -121,7 +121,7 @@ runRandT  :: (Monad m, RandomGen g) => RandT g m a -> g -> m (a, g)
 runRandT (RandT x) g = runStateT x g
 
 -- | A basic random monad.
-type Rand g a = RandT g Identity a
+type Rand g = RandT g Identity
 
 -- | Evaluate a random computation using the generator @g@.  Note that the
 -- generator @g@ is not returned, so there's no way to recover the
