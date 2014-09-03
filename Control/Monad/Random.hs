@@ -88,13 +88,13 @@ liftState t = do v <- get
                  return x
 
 -- | Lift arbitrary action to RandT
-liftRandT :: (Monad m, RandomGen g, Random a) =>
+liftRandT :: (Monad m, RandomGen g) =>
              (g -> m (a, g)) -- ^ action returning value and new generator state
              -> RandT g m a
 liftRandT = RandT . StateT
 
 -- | Lift arbitrary action to Rand
-liftRand :: (RandomGen g, Random a) =>
+liftRand :: (RandomGen g) =>
             (g -> (a, g)) -- ^ action returning value and new generator state
             -> Rand g a
 liftRand = RandT . liftState
@@ -121,7 +121,7 @@ runRandT  :: (Monad m, RandomGen g) => RandT g m a -> g -> m (a, g)
 runRandT (RandT x) g = runStateT x g
 
 -- | A basic random monad.
-type Rand g a = RandT g Identity a
+type Rand g = RandT g Identity
 
 -- | Evaluate a random computation using the generator @g@.  Note that the
 -- generator @g@ is not returned, so there's no way to recover the
