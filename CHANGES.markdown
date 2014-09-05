@@ -1,3 +1,14 @@
+0.3 (4 September 2014)
+----------------------
+
+  - Eta-reduce definition of `Rand`
+  - Remove unnecessary `Random a` constraint from types of `liftRand`
+    and `liftRandT`.
+
+  Note that a major version bump is required by the PVP since the
+  types of `liftRand` and `liftRandT` have changed, but this release
+  is highly unlikely to break any client code.
+
 0.2.0.1 (24 August 2014)
 ------------------------
 
