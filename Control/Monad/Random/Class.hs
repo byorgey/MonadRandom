@@ -36,10 +36,10 @@ class (Monad m) => MonadRandom m where
     -- 'System.Random.randoms' for details.
     getRandoms :: (Random a) => m [a]
     -- | Return a randomly-selected value of type @a@ in the range
-    -- /(lo,hi)/.  See 'System.Random.randomR' for details.
+    -- /[lo,hi]/.  See 'System.Random.randomR' for details.
     getRandomR :: (Random a) => (a,a) -> m a
     -- | Return an infinite stream of randomly-selected value of type @a@
-    -- in the range /(lo,hi)/.  See 'System.Random.randomRs' for details.
+    -- in the range /[lo,hi]/.  See 'System.Random.randomRs' for details.
     getRandomRs :: (Random a) => (a,a) -> m [a]
 
 -- | An interface to monads with splittable state (as most random number generation monads will have).
