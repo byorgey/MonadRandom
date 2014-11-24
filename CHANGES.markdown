@@ -1,3 +1,8 @@
+0.3.0.1 (24 November 2014)
+--------------------------
+
+  - Improve documentation: ranges are exclusive at the upper bound
+
 0.3 (4 September 2014)
 ----------------------
 
