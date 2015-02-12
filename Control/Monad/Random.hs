@@ -50,11 +50,8 @@ import           Control.Applicative
 import           Control.Arrow
 import           Control.Monad                ()
 import           Control.Monad.Cont
-#if MIN_VERSION_transformers(0,4,0)
 import           Control.Monad.Except
-#else
 import           Control.Monad.Error
-#endif
 import           Control.Monad.Identity
 import           Control.Monad.Random.Class
 import           Control.Monad.Reader
@@ -203,11 +200,13 @@ instance (MonadRandom m, Monoid w) => MonadRandom (RWSS.RWST r w s m) where
     getRandoms = lift getRandoms
     getRandomRs = lift . getRandomRs
 
-#if MIN_VERSION_transformers(0,4,0)
 instance (MonadRandom m) => MonadRandom (ExceptT e m) where
-#else
+    getRandom = lift getRandom
+    getRandomR = lift . getRandomR
+    getRandoms = lift getRandoms
+    getRandomRs = lift . getRandomRs
+
 instance (Error e, MonadRandom m) => MonadRandom (ErrorT e m) where
-#endif
     getRandom = lift getRandom
     getRandomR = lift . getRandomR
     getRandoms = lift getRandoms
@@ -249,11 +248,10 @@ instance (MonadSplit g m, Monoid w) => MonadSplit g (RWSL.RWST r w s m) where
 instance (MonadSplit g m, Monoid w) => MonadSplit g (RWSS.RWST r w s m) where
     getSplit = lift getSplit
 
-#if MIN_VERSION_transformers(0,4,0)
 instance (MonadSplit g m) => MonadSplit g (ExceptT e m) where
-#else
+    getSplit = lift getSplit
+
 instance (Error e, MonadSplit g m) => MonadSplit g (ErrorT e m) where
-#endif
     getSplit = lift getSplit
 
 instance (MonadSplit g m) => MonadSplit g (MaybeT m) where
