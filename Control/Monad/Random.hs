@@ -81,12 +81,6 @@ instance (Functor m,Monad m) => Applicative (RandT g m) where
   pure = return
   (<*>) = ap
 
-liftState :: (MonadState s m) => (s -> (a,s)) -> m a
-liftState t = do v <- get
-                 let (x, v') = t v
-                 put v'
-                 return x
-
 -- | Lift arbitrary action to RandT
 liftRandT :: (Monad m, RandomGen g) =>
              (g -> m (a, g)) -- ^ action returning value and new generator state
@@ -97,17 +91,17 @@ liftRandT = RandT . StateT
 liftRand :: (RandomGen g) =>
             (g -> (a, g)) -- ^ action returning value and new generator state
             -> Rand g a
-liftRand = RandT . liftState
+liftRand = RandT . state
 
 instance (Monad m, RandomGen g) => MonadRandom (RandT g m) where
-    getRandom = RandT . liftState $ random
-    getRandoms = RandT . liftState $ first randoms . split
-    getRandomR (x,y) = RandT . liftState $ randomR (x,y)
-    getRandomRs (x,y) = RandT . liftState $
+    getRandom = RandT . state $ random
+    getRandoms = RandT . state $ first randoms . split
+    getRandomR (x,y) = RandT . state $ randomR (x,y)
+    getRandomRs (x,y) = RandT . state $
                             first (randomRs (x,y)) . split
 
 instance (Monad m, RandomGen g) => MonadSplit g (RandT g m) where
-    getSplit = RandT . liftState $ split
+    getSplit = RandT . state $ split
 
 -- | Evaluate a RandT computation using the generator @g@.  Note that the
 -- generator @g@ is not returned, so there's no way to recover the
