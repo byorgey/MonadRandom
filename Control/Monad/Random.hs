@@ -50,7 +50,6 @@ import           Control.Applicative
 import           Control.Arrow
 import           Control.Monad                ()
 import           Control.Monad.Cont
-import           Control.Monad.Except
 import           Control.Monad.Error
 import           Control.Monad.Identity
 import           Control.Monad.Random.Class
@@ -61,6 +60,7 @@ import           Control.Monad.State
 import qualified Control.Monad.State.Lazy     as SL
 import qualified Control.Monad.State.Strict   as SS
 import           Control.Monad.Trans          ()
+import           Control.Monad.Trans.Except
 import           Control.Monad.Trans.Identity
 import           Control.Monad.Trans.Maybe
 import           Control.Monad.Writer.Class

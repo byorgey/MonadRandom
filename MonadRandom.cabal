@@ -17,6 +17,6 @@ source-repository head
 
 library
   exposed-modules:     Control.Monad.Random, Control.Monad.Random.Class
-  build-depends:       base >= 2 && < 5, transformers >= 0.3 && < 0.5, mtl, mtl-compat == 0.1.*, random
+  build-depends:       base >= 2 && < 5, transformers >= 0.3 && < 0.5, transformers-compat == 0.4.*, mtl, random
   ghc-options:         -Wall
   default-language:    Haskell2010
