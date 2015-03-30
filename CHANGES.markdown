@@ -1,3 +1,8 @@
+0.3.0.2 (30 March 2015)
+-----------------------
+
+  - Add transformers-compat to allow building with newer mtl
+
 0.3.0.1 (24 November 2014)
 --------------------------
 
