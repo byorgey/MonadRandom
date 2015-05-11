@@ -79,14 +79,13 @@ instance (Functor m,Monad m) => Applicative (RandT g m) where
   (<*>) = ap
 
 -- | Lift arbitrary action to RandT
-liftRandT :: (Monad m, RandomGen g) =>
+liftRandT :: (Monad m) =>
              (g -> m (a, g)) -- ^ action returning value and new generator state
              -> RandT g m a
 liftRandT = RandT . StateT
 
 -- | Lift arbitrary action to Rand
-liftRand :: (RandomGen g) =>
-            (g -> (a, g)) -- ^ action returning value and new generator state
+liftRand :: (g -> (a, g)) -- ^ action returning value and new generator state
             -> Rand g a
 liftRand = RandT . state
 
@@ -103,12 +102,12 @@ instance (Monad m, RandomGen g) => MonadSplit g (RandT g m) where
 -- | Evaluate a RandT computation using the generator @g@.  Note that the
 -- generator @g@ is not returned, so there's no way to recover the
 -- updated version of @g@.
-evalRandT :: (Monad m, RandomGen g) => RandT g m a -> g -> m a
+evalRandT :: (Monad m) => RandT g m a -> g -> m a
 evalRandT (RandT x) g = evalStateT x g
 
 -- | Run a RandT computation using the generator @g@, returning the result and
 -- the updated generator.
-runRandT  :: (Monad m, RandomGen g) => RandT g m a -> g -> m (a, g)
+runRandT  :: (Monad m) => RandT g m a -> g -> m (a, g)
 runRandT (RandT x) g = runStateT x g
 
 -- | A basic random monad.
@@ -117,12 +116,12 @@ type Rand g = RandT g Identity
 -- | Evaluate a random computation using the generator @g@.  Note that the
 -- generator @g@ is not returned, so there's no way to recover the
 -- updated version of @g@.
-evalRand :: (RandomGen g) => Rand g a -> g -> a
+evalRand :: Rand g a -> g -> a
 evalRand x g = runIdentity (evalRandT x g)
 
 -- | Run a random computation using the generator @g@, returning the result
 -- and the updated generator.
-runRand :: (RandomGen g) => Rand g a -> g -> (a, g)
+runRand :: Rand g a -> g -> (a, g)
 runRand x g = runIdentity (runRandT x g)
 
 -- | Evaluate a random computation in the IO monad, splitting the global standard generator to get a new one for the computation.
