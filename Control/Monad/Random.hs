@@ -79,8 +79,7 @@ instance (Functor m,Monad m) => Applicative (RandT g m) where
   (<*>) = ap
 
 -- | Lift arbitrary action to RandT
-liftRandT :: (Monad m) =>
-             (g -> m (a, g)) -- ^ action returning value and new generator state
+liftRandT :: (g -> m (a, g)) -- ^ action returning value and new generator state
              -> RandT g m a
 liftRandT = RandT . StateT
 
@@ -107,7 +106,7 @@ evalRandT (RandT x) g = evalStateT x g
 
 -- | Run a RandT computation using the generator @g@, returning the result and
 -- the updated generator.
-runRandT  :: (Monad m) => RandT g m a -> g -> m (a, g)
+runRandT  :: RandT g m a -> g -> m (a, g)
 runRandT (RandT x) g = runStateT x g
 
 -- | A basic random monad.
