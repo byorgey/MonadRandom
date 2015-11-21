@@ -1,3 +1,14 @@
+0.4.1 (20 November 2015)
+------------------------
+
+  - Remove unnecessary `Monad m` constraint from `liftRandT` and
+    `runRandT`.
+
+  This should again technically require a major version bump, but I'm
+  not doing it this time in the interest of not being super annoying.
+  If this breaks something for you, just yell, and I will
+  deprecate this version and do a proper 0.5 release.
+
 0.4 (12 May 2015)
 -----------------
 
