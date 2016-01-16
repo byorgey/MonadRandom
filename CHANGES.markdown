@@ -1,3 +1,8 @@
+0.4.2 (16 January 2016)
+-----------------------
+
+  - Add `MonadPlus` and `Alternative` instances for `RandT`.
+
 0.4.1 (20 November 2015)
 ------------------------
 
