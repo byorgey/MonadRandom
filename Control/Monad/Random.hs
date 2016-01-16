@@ -72,11 +72,15 @@ import           System.Random
 -- | A monad transformer which adds a random number generator to an
 -- existing monad.
 newtype RandT g m a = RandT (StateT g m a)
-    deriving (Functor, Monad, MonadTrans, MonadIO, MonadFix, MonadReader r, MonadWriter w)
+    deriving (Functor, Monad, MonadPlus, MonadTrans, MonadIO, MonadFix, MonadReader r, MonadWriter w)
 
-instance (Functor m,Monad m) => Applicative (RandT g m) where
+instance (Functor m, Monad m) => Applicative (RandT g m) where
   pure = return
   (<*>) = ap
+
+instance (Functor m, MonadPlus m) => Alternative (RandT g m) where
+  empty = mzero
+  (<|>) = mplus
 
 -- | Lift arbitrary action to RandT
 liftRandT :: (g -> m (a, g)) -- ^ action returning value and new generator state
