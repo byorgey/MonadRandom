@@ -19,7 +19,7 @@ library
   exposed-modules:     Control.Monad.Random, Control.Monad.Random.Class
   build-depends:       base >= 2 && < 5,
                        transformers >= 0.3 && < 0.5,
-                       transformers-compat == 0.4.*,
+                       transformers-compat >= 0.4 && < 0.6,
                        mtl >= 2.1 && < 2.3,
                        random
   ghc-options:         -Wall
