@@ -1,3 +1,8 @@
+0.4.2.3 (21 April 2016)
+-----------------------
+
+  - Mark `Control.Monad.Random` as `Trustworthy`.
+
 0.4.2.2 (18 January 2016)
 -------------------------
 
