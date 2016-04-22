@@ -2,6 +2,7 @@
 {-# LANGUAGE FlexibleInstances          #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE MultiParamTypeClasses      #-}
+{-# LANGUAGE Trustworthy                #-}
 {-# LANGUAGE UndecidableInstances       #-}
 {-# OPTIONS -fno-warn-orphans #-}
 
