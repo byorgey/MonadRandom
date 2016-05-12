@@ -28,7 +28,8 @@ module Control.Monad.Random.Class (
     getSplit
     ) where
 
-import System.Random
+import           System.Random
+import           Data.Monoid                  (Monoid)
 import           Control.Monad.Cont
 import           Control.Monad.Error
 import           Control.Monad.Identity
