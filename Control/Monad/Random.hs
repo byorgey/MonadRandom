@@ -4,7 +4,6 @@
 {-# LANGUAGE MultiParamTypeClasses      #-}
 {-# LANGUAGE Trustworthy                #-}
 {-# LANGUAGE UndecidableInstances       #-}
-{-# OPTIONS -fno-warn-orphans #-}
 
 {- |
 Copyright    : 2006-2007 Cale Gibbard, Russell O'Connor, Dan Doel, Remi Turk, Eric Kidd.
@@ -51,22 +50,13 @@ import           Control.Applicative
 import           Control.Arrow
 import           Control.Monad                ()
 import           Control.Monad.Cont
-import           Control.Monad.Error
 import           Control.Monad.Identity
 import           Control.Monad.Random.Class
 import           Control.Monad.Reader
-import qualified Control.Monad.RWS.Lazy       as RWSL
-import qualified Control.Monad.RWS.Strict     as RWSS
 import           Control.Monad.State
-import qualified Control.Monad.State.Lazy     as SL
-import qualified Control.Monad.State.Strict   as SS
 import           Control.Monad.Trans          ()
-import           Control.Monad.Trans.Except
 import           Control.Monad.Trans.Identity
-import           Control.Monad.Trans.Maybe
 import           Control.Monad.Writer.Class
-import qualified Control.Monad.Writer.Lazy    as WL
-import qualified Control.Monad.Writer.Strict  as WS
 import           Data.Monoid                  (Monoid)
 import           System.Random
 
@@ -149,126 +139,9 @@ fromList xs = do
 uniform :: (MonadRandom m) => [a] -> m a
 uniform = fromList . fmap (flip (,) 1)
 
-instance (MonadRandom m) => MonadRandom (IdentityT m) where
-    getRandom = lift getRandom
-    getRandomR = lift . getRandomR
-    getRandoms = lift getRandoms
-    getRandomRs = lift . getRandomRs
-
-instance (MonadRandom m) => MonadRandom (SL.StateT s m) where
-    getRandom = lift getRandom
-    getRandomR = lift . getRandomR
-    getRandoms = lift getRandoms
-    getRandomRs = lift . getRandomRs
-
-instance (MonadRandom m) => MonadRandom (SS.StateT s m) where
-    getRandom = lift getRandom
-    getRandomR = lift . getRandomR
-    getRandoms = lift getRandoms
-    getRandomRs = lift . getRandomRs
-
-instance (MonadRandom m, Monoid w) => MonadRandom (WL.WriterT w m) where
-    getRandom = lift getRandom
-    getRandomR = lift . getRandomR
-    getRandoms = lift getRandoms
-    getRandomRs = lift . getRandomRs
-
-instance (MonadRandom m, Monoid w) => MonadRandom (WS.WriterT w m) where
-    getRandom = lift getRandom
-    getRandomR = lift . getRandomR
-    getRandoms = lift getRandoms
-    getRandomRs = lift . getRandomRs
-
-instance (MonadRandom m) => MonadRandom (ReaderT r m) where
-    getRandom = lift getRandom
-    getRandomR = lift . getRandomR
-    getRandoms = lift getRandoms
-    getRandomRs = lift . getRandomRs
-
-instance (MonadRandom m, Monoid w) => MonadRandom (RWSL.RWST r w s m) where
-    getRandom = lift getRandom
-    getRandomR = lift . getRandomR
-    getRandoms = lift getRandoms
-    getRandomRs = lift . getRandomRs
-
-instance (MonadRandom m, Monoid w) => MonadRandom (RWSS.RWST r w s m) where
-    getRandom = lift getRandom
-    getRandomR = lift . getRandomR
-    getRandoms = lift getRandoms
-    getRandomRs = lift . getRandomRs
-
-instance (MonadRandom m) => MonadRandom (ExceptT e m) where
-    getRandom = lift getRandom
-    getRandomR = lift . getRandomR
-    getRandoms = lift getRandoms
-    getRandomRs = lift . getRandomRs
-
-instance (Error e, MonadRandom m) => MonadRandom (ErrorT e m) where
-    getRandom = lift getRandom
-    getRandomR = lift . getRandomR
-    getRandoms = lift getRandoms
-    getRandomRs = lift . getRandomRs
-
-instance (MonadRandom m) => MonadRandom (MaybeT m) where
-    getRandom = lift getRandom
-    getRandomR = lift . getRandomR
-    getRandoms = lift getRandoms
-    getRandomRs = lift . getRandomRs
-
-instance MonadRandom m => MonadRandom (ContT r m) where
-    getRandom = lift getRandom
-    getRandomR = lift . getRandomR
-    getRandoms = lift getRandoms
-    getRandomRs = lift . getRandomRs
-
-instance (MonadSplit g m) => MonadSplit g (IdentityT m) where
-    getSplit = lift getSplit
-
-instance (MonadSplit g m) => MonadSplit g (SL.StateT s m) where
-    getSplit = lift getSplit
-
-instance (MonadSplit g m) => MonadSplit g (SS.StateT s m) where
-    getSplit = lift getSplit
-
-instance (MonadSplit g m, Monoid w) => MonadSplit g (WL.WriterT w m) where
-    getSplit = lift getSplit
-
-instance (MonadSplit g m, Monoid w) => MonadSplit g (WS.WriterT w m) where
-    getSplit = lift getSplit
-
-instance (MonadSplit g m) => MonadSplit g (ReaderT r m) where
-    getSplit = lift getSplit
-
-instance (MonadSplit g m, Monoid w) => MonadSplit g (RWSL.RWST r w s m) where
-    getSplit = lift getSplit
-
-instance (MonadSplit g m, Monoid w) => MonadSplit g (RWSS.RWST r w s m) where
-    getSplit = lift getSplit
-
-instance (MonadSplit g m) => MonadSplit g (ExceptT e m) where
-    getSplit = lift getSplit
-
-instance (Error e, MonadSplit g m) => MonadSplit g (ErrorT e m) where
-    getSplit = lift getSplit
-
-instance (MonadSplit g m) => MonadSplit g (MaybeT m) where
-    getSplit = lift getSplit
-
-instance (MonadSplit g m) => MonadSplit g (ContT r m) where
-    getSplit = lift getSplit
-
 instance (MonadState s m) => MonadState s (RandT g m) where
     get = lift get
     put = lift . put
-
-instance MonadRandom IO where
-    getRandom = randomIO
-    getRandomR = randomRIO
-    getRandoms = fmap randoms newStdGen
-    getRandomRs b = fmap (randomRs b) newStdGen
-
-instance MonadSplit StdGen IO where
-    getSplit = newStdGen
 
 {- $RandExample
 
