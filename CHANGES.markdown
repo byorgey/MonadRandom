@@ -1,3 +1,9 @@
+0.5.1 (3 Aug 2016)
+------------------
+
+  - Restore `evalRandIO` operation.
+  - Add `evalRandTIO` operation.
+
 0.5 (26 July 2016)
 ------------------
 

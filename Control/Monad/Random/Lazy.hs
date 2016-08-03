@@ -23,6 +23,7 @@ module Control.Monad.Random.Lazy
       execRand,
       mapRand,
       withRand,
+      evalRandIO,
       -- * The RandT monad transformer
       RandT,
       liftRandT,
@@ -31,6 +32,7 @@ module Control.Monad.Random.Lazy
       execRandT,
       mapRandT,
       withRandT,
+      evalRandTIO,
       -- * Lazy random monads
       module Control.Monad.Random.Class,
       module Control.Monad,
@@ -43,8 +45,8 @@ import Control.Monad.Random.Class
 
 import Control.Monad.Trans
 import Control.Monad.Trans.Random.Lazy (
-  Rand, liftRand, runRand, evalRand, execRand, mapRand, withRand,
-  RandT, liftRandT, runRandT, evalRandT, execRandT, mapRandT, withRandT)
+  Rand, liftRand, runRand, evalRand, execRand, mapRand, withRand, evalRandIO,
+  RandT, liftRandT, runRandT, evalRandT, execRandT, mapRandT, withRandT, evalRandTIO)
 
 import Control.Monad
 import Control.Monad.Fix

@@ -31,6 +31,7 @@ module Control.Monad.Trans.Random.Lazy
     execRand,
     mapRand,
     withRand,
+    evalRandIO,
     -- * The RandT monad transformer
     RandT,
     liftRandT,
@@ -45,6 +46,7 @@ module Control.Monad.Trans.Random.Lazy
     liftCatch,
     liftListen,
     liftPass,
+    evalRandTIO,
     -- * Examples
     -- ** Random monads
     -- $examples
@@ -236,6 +238,17 @@ liftListen listen_ m = RandT $ LazyState.liftListen listen_ (unRandT m)
 liftPass :: (Monad m) => Pass w m (a, g) -> Pass w (RandT g m) a
 liftPass pass_ m = RandT $ LazyState.liftPass pass_ (unRandT m)
 
+-- | Evaluate a random computation in the `IO` monad, splitting the global
+-- standard generator to get a new one for the computation.
+evalRandIO :: Rand StdGen a -> IO a
+evalRandIO t = liftM (evalRand t) newStdGen
+
+-- | Evaluate a random computation that is embedded in the `IO` monad,
+-- splitting the global standard generator to get a new one for the
+-- computation.
+evalRandTIO :: (MonadIO m) => RandT StdGen m a -> m a
+evalRandTIO t = liftIO newStdGen >>= evalRandT t
+
 {- $examples
 
 The @die@ function simulates the roll of a die, picking a number between 1
@@ -251,11 +264,10 @@ The @dice@ function uses @replicate@ and @sequence@ to simulate the roll of
 > dice :: (RandomGen g) => Int -> Rand g [Int]
 > dice n = sequence (replicate n die)
 
-To extract a value from the 'Rand' monad transformer, we can use 'evalRand'.
+To extract a value from the 'Rand' monad transformer, we can use 'evalRandIO'.
 
 > main = do
->   g <- newStdGen
->   let values = evalRand (dice 2) g
+>   values <- evalRandIO (dice 2)
 >   putStrLn (show values)
 
 -}
