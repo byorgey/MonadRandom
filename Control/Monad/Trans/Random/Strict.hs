@@ -15,7 +15,7 @@ Maintainer   :  byorgey@gmail.com
 Stability    :  experimental
 Portability  :  non-portable (multi-param classes, functional dependencies, undecidable instances)
 
-Lazy random monads, passing a random number generator through a computation.
+Strict random monads, passing a random number generator through a computation.
 See below for examples.
 
 In this version, sequencing of computations is strict (but computations are not
