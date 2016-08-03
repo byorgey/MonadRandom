@@ -1,11 +1,5 @@
-0.5.1 (3 Aug 2016)
-------------------
-
-  - Restore `evalRandIO` operation.
-  - Add `evalRandTIO` operation.
-
-0.5 (26 July 2016)
-------------------
+0.5 (3 August 2016)
+-------------------
 
   - Refactor to reflect structure of `mtl` and `transformers` libraries.
   - Improve documentation.
@@ -14,7 +8,7 @@
   - Add (but do not export) `unRandT` field to `RandT`.
   - Add `MonadCont`, `MonadError` and `MonadRWS` instances for `RandT`.
   - Add signatures for `RandT` operations that require specialized lifting (see "Control.Monad.Signatures").
-  - Remove `evalRandIO` operation.
+  - Add `evalRandTIO` operation.
   - Move `fromList` and `uniform` operations to "Control.Monad.Random.Class".
   - `fromList` operation raises error with total weight of elements is zero.
 
