@@ -39,6 +39,7 @@ module Control.Monad.Random (
     evalRandIO,
     fromList,
     uniform,
+    uniformMay,
     Rand, RandT, -- but not the data constructors
     -- * Special lift functions
     liftRand,
@@ -148,6 +149,11 @@ fromList xs = do
 -- | Sample a value from a uniform distribution of a list of elements.
 uniform :: (MonadRandom m) => [a] -> m a
 uniform = fromList . fmap (flip (,) 1)
+
+-- | Sample a value from a uniform distribution of a list of elements if that list is not empty.
+uniformMay :: (MonadRandom m) => [a] -> m (Maybe a)
+uniformMay [] = Nothing
+uniformMay xs = fmap Just (uniform xs)
 
 instance (MonadRandom m) => MonadRandom (IdentityT m) where
     getRandom = lift getRandom
