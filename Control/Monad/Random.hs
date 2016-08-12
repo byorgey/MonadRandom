@@ -152,7 +152,7 @@ uniform = fromList . fmap (flip (,) 1)
 
 -- | Sample a value from a uniform distribution of a list of elements if that list is not empty.
 uniformMay :: (MonadRandom m) => [a] -> m (Maybe a)
-uniformMay [] = Nothing
+uniformMay [] = return Nothing
 uniformMay xs = fmap Just (uniform xs)
 
 instance (MonadRandom m) => MonadRandom (IdentityT m) where
