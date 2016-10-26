@@ -3,6 +3,7 @@
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE MultiParamTypeClasses      #-}
 {-# LANGUAGE Trustworthy                #-}
+{-# LANGUAGE TypeFamilies               #-}
 {-# LANGUAGE UndecidableInstances       #-}
 {-# OPTIONS -fno-warn-orphans #-}
 
@@ -54,6 +55,7 @@ import           Control.Monad                ()
 import           Control.Monad.Cont
 import           Control.Monad.Error
 import           Control.Monad.Identity
+import           Control.Monad.Primitive
 import           Control.Monad.Random.Class
 import           Control.Monad.Reader
 import qualified Control.Monad.RWS.Lazy       as RWSL
@@ -83,6 +85,10 @@ instance (Functor m, Monad m) => Applicative (RandT g m) where
 instance (Functor m, MonadPlus m) => Alternative (RandT g m) where
   empty = mzero
   (<|>) = mplus
+
+instance PrimMonad m => PrimMonad (RandT s m) where
+  type PrimState (RandT s m) = PrimState m
+  primitive = lift . primitive
 
 -- | Lift arbitrary action to RandT
 liftRandT :: (g -> m (a, g)) -- ^ action returning value and new generator state
