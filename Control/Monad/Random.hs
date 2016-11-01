@@ -1,4 +1,4 @@
-{-# LANGUAGE Trustworthy #-}
+{-# LANGUAGE Safe #-}
 
 {- |
 Module       :  Control.Monad.Random
