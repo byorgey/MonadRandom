@@ -1,3 +1,26 @@
+0.5 (3 August 2016)
+-------------------
+
+  - Refactor to reflect structure of `mtl` and `transformers` libraries.
+  - Improve documentation.
+  - Add lazy and strict variants of `RandT`.
+  - Add `MonadRandom` and `MonadSplit` instances for `ListT`.
+  - Add (but do not export) `unRandT` field to `RandT`.
+  - Add `MonadCont`, `MonadError` and `MonadRWS` instances for `RandT`.
+  - Add signatures for `RandT` operations that require specialized lifting (see "Control.Monad.Signatures").
+  - Add `evalRandTIO` operation.
+  - Move `fromList` and `uniform` operations to "Control.Monad.Random.Class".
+  - `fromList` operation raises error with total weight of elements is zero.
+
+  This patch requires a major version bump, as it may incur breaking changes
+  for modules that import `Control.Monad.Random` only. All modules have been
+  refactored to better reflect the structure of the `mtl` and `transformers`
+  libraries.
+  
+  Lazy and strict variants of `RandT` are implemented, with lazy as the
+  default. Instances of all `mtl` classes are provided for `RandT`. Instances
+  of `MonadRandom` and `MonadSplit` are provided for all `transformers` types.
+
 0.4.2.3 (21 April 2016)
 -----------------------
 
