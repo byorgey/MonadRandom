@@ -1,7 +1,7 @@
 {-# LANGUAGE FlexibleInstances      #-}
 {-# LANGUAGE FunctionalDependencies #-}
 {-# LANGUAGE MultiParamTypeClasses  #-}
-{-# LANGUAGE Trustworthy            #-}
+{-# LANGUAGE Safe                   #-}
 {-# LANGUAGE UndecidableInstances   #-}
 
 {- |
