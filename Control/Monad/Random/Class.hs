@@ -41,7 +41,6 @@ import qualified Control.Monad.Trans.State.Lazy    as LazyState
 import qualified Control.Monad.Trans.State.Strict  as StrictState
 import qualified Control.Monad.Trans.Writer.Lazy   as LazyWriter
 import qualified Control.Monad.Trans.Writer.Strict as StrictWriter
-import           Data.Monoid
 import           System.Random
 
 -- | With a source of random number supply in hand, the 'MonadRandom' class
