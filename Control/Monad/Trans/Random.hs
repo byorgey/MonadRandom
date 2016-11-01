@@ -21,4 +21,4 @@ module Control.Monad.Trans.Random
     ( module Control.Monad.Trans.Random.Lazy,
     ) where
 
-import Control.Monad.Trans.Random.Lazy
+import           Control.Monad.Trans.Random.Lazy

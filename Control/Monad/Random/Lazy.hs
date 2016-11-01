@@ -41,13 +41,17 @@ module Control.Monad.Random.Lazy
       module Data.Monoid,
     ) where
 
-import Control.Monad.Random.Class
+import           Control.Monad.Random.Class
 
-import Control.Monad.Trans
-import Control.Monad.Trans.Random.Lazy (
-  Rand, liftRand, runRand, evalRand, execRand, mapRand, withRand, evalRandIO,
-  RandT, liftRandT, runRandT, evalRandT, execRandT, mapRandT, withRandT, evalRandTIO)
+import           Control.Monad.Trans
+import           Control.Monad.Trans.Random.Lazy (Rand, RandT, evalRand,
+                                                  evalRandIO, evalRandT,
+                                                  evalRandTIO, execRand,
+                                                  execRandT, liftRand,
+                                                  liftRandT, mapRand, mapRandT,
+                                                  runRand, runRandT, withRand,
+                                                  withRandT)
 
-import Control.Monad
-import Control.Monad.Fix
-import Data.Monoid
+import           Control.Monad
+import           Control.Monad.Fix
+import           Data.Monoid

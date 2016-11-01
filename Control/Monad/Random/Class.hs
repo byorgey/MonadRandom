@@ -1,8 +1,8 @@
-{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE FlexibleInstances      #-}
 {-# LANGUAGE FunctionalDependencies #-}
-{-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE Trustworthy #-}
-{-# LANGUAGE UndecidableInstances #-}
+{-# LANGUAGE MultiParamTypeClasses  #-}
+{-# LANGUAGE Trustworthy            #-}
+{-# LANGUAGE UndecidableInstances   #-}
 
 {- |
 Module       :  Control.Monad.Random.Class
@@ -26,23 +26,23 @@ module Control.Monad.Random.Class (
     uniformMay
     ) where
 
-import Control.Monad
-import Control.Monad.Trans.Class
-import Control.Monad.Trans.Cont
-import Control.Monad.Trans.Error
-import Control.Monad.Trans.Except
-import Control.Monad.Trans.Identity
-import Control.Monad.Trans.List
-import Control.Monad.Trans.Maybe
-import qualified Control.Monad.Trans.RWS.Lazy as LazyRWS
-import qualified Control.Monad.Trans.RWS.Strict as StrictRWS
-import Control.Monad.Trans.Reader
-import qualified Control.Monad.Trans.State.Lazy as LazyState
-import qualified Control.Monad.Trans.State.Strict as StrictState
-import qualified Control.Monad.Trans.Writer.Lazy as LazyWriter
+import           Control.Monad
+import           Control.Monad.Trans.Class
+import           Control.Monad.Trans.Cont
+import           Control.Monad.Trans.Error
+import           Control.Monad.Trans.Except
+import           Control.Monad.Trans.Identity
+import           Control.Monad.Trans.List
+import           Control.Monad.Trans.Maybe
+import           Control.Monad.Trans.Reader
+import qualified Control.Monad.Trans.RWS.Lazy      as LazyRWS
+import qualified Control.Monad.Trans.RWS.Strict    as StrictRWS
+import qualified Control.Monad.Trans.State.Lazy    as LazyState
+import qualified Control.Monad.Trans.State.Strict  as StrictState
+import qualified Control.Monad.Trans.Writer.Lazy   as LazyWriter
 import qualified Control.Monad.Trans.Writer.Strict as StrictWriter
-import Data.Monoid
-import System.Random
+import           Data.Monoid
+import           System.Random
 
 -- | With a source of random number supply in hand, the 'MonadRandom' class
 -- allows the programmer to extract random values of a variety of types.
@@ -57,7 +57,7 @@ class (Monad m) => MonadRandom m where
   --
   -- See 'System.Random.randomR' for details.
   getRandomR :: (Random a) => (a, a) -> m a
-  
+
   -- | The same as 'getRandomR', but using a default range determined by the type:
   --
   -- * For bounded types (instances of 'Bounded', such as 'Char'),
@@ -70,13 +70,13 @@ class (Monad m) => MonadRandom m where
   --
   -- See 'System.Random.random' for details.
   getRandom :: (Random a) => m a
-  
+
   -- | Plural variant of 'getRandomR', producing an infinite list of
   -- random values instead of returning a new generator.
   --
   -- See 'System.Random.randomRs' for details.
   getRandomRs :: (Random a) => (a, a) -> m [a]
-  
+
   -- | Plural variant of 'getRandom', producing an infinite list of
   -- random values instead of returning a new generator.
   --
@@ -237,7 +237,8 @@ fromList xs = do
 uniform :: (MonadRandom m) => [a] -> m a
 uniform = fromList . map (flip (,) 1)
 
--- | Sample a value from a uniform distribution of a list of elements if that list is not empty.
+-- | Sample a value from a uniform distribution of a list of elements
+--   if that list is not empty.
 uniformMay :: (MonadRandom m) => [a] -> m (Maybe a)
 uniformMay [] = return Nothing
 uniformMay xs = liftM Just (uniform xs)

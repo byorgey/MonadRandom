@@ -18,4 +18,4 @@ module Control.Monad.Random
     ( module Control.Monad.Random.Lazy,
     ) where
 
-import Control.Monad.Random.Lazy
+import           Control.Monad.Random.Lazy

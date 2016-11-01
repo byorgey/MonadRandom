@@ -1,8 +1,8 @@
-{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE FlexibleInstances          #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
-{-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE Trustworthy #-}
-{-# LANGUAGE UndecidableInstances #-}
+{-# LANGUAGE MultiParamTypeClasses      #-}
+{-# LANGUAGE Trustworthy                #-}
+{-# LANGUAGE UndecidableInstances       #-}
 
 {- |
 Module       :  Control.Monad.Trans.Random.Lazy
@@ -52,20 +52,20 @@ module Control.Monad.Trans.Random.Lazy
     -- $examples
   ) where
 
-import Control.Applicative
-import Control.Arrow (first)
-import Control.Monad
-import Control.Monad.Cont.Class
-import Control.Monad.Error.Class
-import Control.Monad.Fix
-import Control.Monad.IO.Class
-import Control.Monad.RWS.Class
-import Control.Monad.Random.Class
-import Control.Monad.Signatures
-import Control.Monad.Trans.Class
+import           Control.Applicative
+import           Control.Arrow                  (first)
+import           Control.Monad
+import           Control.Monad.Cont.Class
+import           Control.Monad.Error.Class
+import           Control.Monad.Fix
+import           Control.Monad.IO.Class
+import           Control.Monad.Random.Class
+import           Control.Monad.RWS.Class
+import           Control.Monad.Signatures
+import           Control.Monad.Trans.Class
 import qualified Control.Monad.Trans.State.Lazy as LazyState
-import Data.Functor.Identity
-import System.Random
+import           Data.Functor.Identity
+import           System.Random
 
 -- | A random monad parameterized by the type @g@ of the generator to carry.
 --
@@ -156,7 +156,7 @@ liftRandT = RandT . LazyState.StateT
 
 -- | Unwrap a random monad computation as an impure function.
 -- (The inverse of 'liftRandT'.)
-runRandT 
+runRandT
   :: RandT g m a
   -- ^ generator-passing computation to execute
   -> g
