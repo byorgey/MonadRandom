@@ -2,6 +2,7 @@
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE MultiParamTypeClasses      #-}
 {-# LANGUAGE Trustworthy                #-}
+{-# LANGUAGE TypeFamilies               #-}
 {-# LANGUAGE UndecidableInstances       #-}
 
 {- |
@@ -60,6 +61,7 @@ import           Control.Monad.Cont.Class
 import           Control.Monad.Error.Class
 import           Control.Monad.Fix
 import           Control.Monad.IO.Class
+import           Control.Monad.Primitive
 import           Control.Monad.Random.Class
 import           Control.Monad.RWS.Class
 import           Control.Monad.Signatures
@@ -214,6 +216,10 @@ instance (RandomGen g, Monad m) => MonadSplit g (RandT g m) where
 instance (MonadState s m) => MonadState s (RandT g m) where
   get = lift get
   put = lift . put
+
+instance PrimMonad m => PrimMonad (RandT s m) where
+  type PrimState (RandT s m) = PrimState m
+  primitive = lift . primitive
 
 -- | Uniform lifting of a @callCC@ operation to the new monad.
 -- This version rolls back to the original state on entering the
