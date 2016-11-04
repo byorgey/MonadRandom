@@ -22,8 +22,11 @@ module Control.Monad.Random.Class (
     MonadRandom(..),
     MonadSplit(..),
     fromList,
+    fromListMay,
     uniform,
-    uniformMay
+    uniformMay,
+    weighted,
+    weightedMay
     ) where
 
 import           Control.Monad
@@ -42,6 +45,8 @@ import qualified Control.Monad.Trans.State.Strict  as StrictState
 import qualified Control.Monad.Trans.Writer.Lazy   as LazyWriter
 import qualified Control.Monad.Trans.Writer.Strict as StrictWriter
 import           System.Random
+
+import qualified Data.Foldable                     as F
 
 -- | With a source of random number supply in hand, the 'MonadRandom' class
 -- allows the programmer to extract random values of a variety of types.
@@ -217,27 +222,50 @@ instance (Monoid w, MonadSplit g m) => MonadSplit g (LazyWriter.WriterT w m) whe
 instance (Monoid w, MonadSplit g m) => MonadSplit g (StrictWriter.WriterT w m) where
   getSplit = lift getSplit
 
--- | Sample a random value from a weighted list.  The list must be non-empty
--- and the total weight of all elements must be non-zero.
+-- | Sample a random value from a weighted nonempty collection of elements.
+weighted :: (F.Foldable t, MonadRandom m) => t (a, Rational) -> m a
+weighted t = do
+  ma <- weightedMay t
+  case ma of
+    Nothing -> error "Control.Monad.Random.Class.weighted: empty collection, or total weight = 0"
+    Just a  -> return a
+
+-- | Sample a random value from a weighted collection of elements.
+--   Return @Nothing@ if the collection is empty or the total weight is
+--   zero.
+weightedMay :: (F.Foldable t, MonadRandom m) => t (a, Rational) -> m (Maybe a)
+weightedMay = fromListMay . F.toList
+
+-- | Sample a random value from a weighted list.  The list must be
+--   non-empty and the total weight must be non-zero.
 fromList :: (MonadRandom m) => [(a, Rational)] -> m a
-fromList [] = do
-  error "Control.Monad.Random.Class.fromList: empty list"
-fromList [(x, _)] = do
-  return x
-fromList xs = do
-  case fromRational (sum (map snd xs)) :: Double of
-    0 -> do
-      error "Control.Monad.Random.Class.fromList: total weight of all elements is zero"
-    s -> do
+fromList ws = do
+  ma <- fromListMay ws
+  case ma of
+    Nothing -> error "Control.Monad.Random.Class.fromList: empty list, or total weight = 0"
+    Just a  -> return a
+
+-- | Sample a random value from a weighted list.  Return @Nothing@ if
+--   the list is empty or the total weight is zero.
+fromListMay :: (MonadRandom m) => [(a, Rational)] -> m (Maybe a)
+fromListMay xs = do
+  let s    = fromRational (sum (map snd xs)) :: Double
+      cums = scanl1 (\ ~(_,q) ~(y,s') -> (y, s'+q)) xs
+  case s of
+    0 -> return Nothing
+    _ -> do
       p <- liftM toRational $ getRandomR (0, s)
-      return . fst . head . dropWhile ((< p) . snd) . scanl1 (\ ~(_x, old_s) ~(y, new_s) -> (y, old_s + new_s)) $ xs
+      return . Just . fst . head . dropWhile ((< p) . snd) $ cums
 
--- | Sample a value from a uniform distribution of a list of elements.
-uniform :: (MonadRandom m) => [a] -> m a
-uniform = fromList . map (flip (,) 1)
+-- | Sample a value uniformly from a nonempty collection of elements.
+uniform :: (F.Foldable t, MonadRandom m) => t a -> m a
+uniform t = do
+  ma <- uniformMay t
+  case ma of
+    Nothing -> error "Control.Monad.Random.Class.uniform: empty collection"
+    Just a  -> return a
 
--- | Sample a value from a uniform distribution of a list of elements
---   if that list is not empty.
-uniformMay :: (MonadRandom m) => [a] -> m (Maybe a)
-uniformMay [] = return Nothing
-uniformMay xs = liftM Just (uniform xs)
+-- | Sample a value uniformly from a collection of elements.  Return
+--   @Nothing@ if the collection is empty.
+uniformMay :: (F.Foldable t, MonadRandom m) => t a -> m (Maybe a)
+uniformMay = fromListMay . map (flip (,) 1) . F.toList
