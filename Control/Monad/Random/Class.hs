@@ -15,12 +15,21 @@ Maintainer   :  byorgey@gmail.com
 Stability    :  experimental
 Portability  :  non-portable (multi-param classes, functional dependencies, undecidable instances)
 
-MonadRandom and MonadSplit classes.
+XXX improve docs here
+
+MonadRandom, MonadSplit, and MonadInterleave classes.
+
 -}
 
 module Control.Monad.Random.Class (
+    -- * MonadRandom XXX
+
     MonadRandom(..),
+    -- * MonadRandom XXX
     MonadSplit(..),
+    -- * MonadRandom XXX
+    MonadInterleave(..),
+    -- * MonadRandom XXX
     fromList,
     fromListMay,
     uniform,
@@ -47,6 +56,10 @@ import qualified Control.Monad.Trans.Writer.Strict as StrictWriter
 import           System.Random
 
 import qualified Data.Foldable                     as F
+
+------------------------------------------------------------
+-- MonadRandom
+------------------------------------------------------------
 
 -- | With a source of random number supply in hand, the 'MonadRandom' class
 -- allows the programmer to extract random values of a variety of types.
@@ -88,92 +101,102 @@ class (Monad m) => MonadRandom m where
   getRandoms :: (Random a) => m [a]
 
 instance MonadRandom IO where
-  getRandomR = randomRIO
-  getRandom = randomIO
+  getRandomR       = randomRIO
+  getRandom        = randomIO
   getRandomRs lohi = liftM (randomRs lohi) newStdGen
-  getRandoms = liftM randoms newStdGen
+  getRandoms       = liftM randoms newStdGen
 
 instance (MonadRandom m) => MonadRandom (ContT r m) where
-  getRandomR = lift . getRandomR
-  getRandom = lift getRandom
+  getRandomR  = lift . getRandomR
+  getRandom   = lift getRandom
   getRandomRs = lift . getRandomRs
-  getRandoms = lift getRandoms
+  getRandoms  = lift getRandoms
 
 instance (Error e, MonadRandom m) => MonadRandom (ErrorT e m) where
-  getRandomR = lift . getRandomR
-  getRandom = lift getRandom
+  getRandomR  = lift . getRandomR
+  getRandom   = lift getRandom
   getRandomRs = lift . getRandomRs
-  getRandoms = lift getRandoms
+  getRandoms  = lift getRandoms
 
 instance (MonadRandom m) => MonadRandom (ExceptT e m) where
-  getRandomR = lift . getRandomR
-  getRandom = lift getRandom
+  getRandomR  = lift . getRandomR
+  getRandom   = lift getRandom
   getRandomRs = lift . getRandomRs
-  getRandoms = lift getRandoms
+  getRandoms  = lift getRandoms
 
 instance (MonadRandom m) => MonadRandom (IdentityT m) where
-  getRandomR = lift . getRandomR
-  getRandom = lift getRandom
+  getRandomR  = lift . getRandomR
+  getRandom   = lift getRandom
   getRandomRs = lift . getRandomRs
-  getRandoms = lift getRandoms
+  getRandoms  = lift getRandoms
 
 instance (MonadRandom m) => MonadRandom (ListT m) where
-  getRandomR = lift . getRandomR
-  getRandom = lift getRandom
+  getRandomR  = lift . getRandomR
+  getRandom   = lift getRandom
   getRandomRs = lift . getRandomRs
-  getRandoms = lift getRandoms
+  getRandoms  = lift getRandoms
 
 instance (MonadRandom m) => MonadRandom (MaybeT m) where
-  getRandomR = lift . getRandomR
-  getRandom = lift getRandom
+  getRandomR  = lift . getRandomR
+  getRandom   = lift getRandom
   getRandomRs = lift . getRandomRs
-  getRandoms = lift getRandoms
+  getRandoms  = lift getRandoms
 
 instance (Monoid w, MonadRandom m) => MonadRandom (LazyRWS.RWST r w s m) where
-  getRandomR = lift . getRandomR
-  getRandom = lift getRandom
+  getRandomR  = lift . getRandomR
+  getRandom   = lift getRandom
   getRandomRs = lift . getRandomRs
-  getRandoms = lift getRandoms
+  getRandoms  = lift getRandoms
 
 instance (Monoid w, MonadRandom m) => MonadRandom (StrictRWS.RWST r w s m) where
-  getRandomR = lift . getRandomR
-  getRandom = lift getRandom
+  getRandomR  = lift . getRandomR
+  getRandom   = lift getRandom
   getRandomRs = lift . getRandomRs
-  getRandoms = lift getRandoms
+  getRandoms  = lift getRandoms
 
 instance (MonadRandom m) => MonadRandom (ReaderT r m) where
-  getRandomR = lift . getRandomR
-  getRandom = lift getRandom
+  getRandomR  = lift . getRandomR
+  getRandom   = lift getRandom
   getRandomRs = lift . getRandomRs
-  getRandoms = lift getRandoms
+  getRandoms  = lift getRandoms
 
 instance (MonadRandom m) => MonadRandom (LazyState.StateT s m) where
-  getRandomR = lift . getRandomR
-  getRandom = lift getRandom
+  getRandomR  = lift . getRandomR
+  getRandom   = lift getRandom
   getRandomRs = lift . getRandomRs
-  getRandoms = lift getRandoms
+  getRandoms  = lift getRandoms
 
 instance (MonadRandom m) => MonadRandom (StrictState.StateT s m) where
-  getRandomR = lift . getRandomR
-  getRandom = lift getRandom
+  getRandomR  = lift . getRandomR
+  getRandom   = lift getRandom
   getRandomRs = lift . getRandomRs
-  getRandoms = lift getRandoms
+  getRandoms  = lift getRandoms
 
 instance (MonadRandom m, Monoid w) => MonadRandom (LazyWriter.WriterT w m) where
-  getRandomR = lift . getRandomR
-  getRandom = lift getRandom
+  getRandomR  = lift . getRandomR
+  getRandom   = lift getRandom
   getRandomRs = lift . getRandomRs
-  getRandoms = lift getRandoms
+  getRandoms  = lift getRandoms
 
 instance (MonadRandom m, Monoid w) => MonadRandom (StrictWriter.WriterT w m) where
-  getRandomR = lift . getRandomR
-  getRandom = lift getRandom
+  getRandomR  = lift . getRandomR
+  getRandom   = lift getRandom
   getRandomRs = lift . getRandomRs
-  getRandoms = lift getRandoms
+  getRandoms  = lift getRandoms
+
+------------------------------------------------------------
+-- MonadSplit
+------------------------------------------------------------
 
 -- | The class 'MonadSplit' proivides a way to specify a random number
--- generator that can be split into two new generators.
+--   generator that can be split into two new generators.
+--
+--   This class is not very useful in practice: typically, one cannot
+--   actually do anything with a generator.  It remains here to avoid
+--   breaking existing code unnecessarily.  For a more practically
+--   useful interface, see 'MonadInterleave'.
 class (Monad m) => MonadSplit g m | m -> g where
+
   -- | The 'getSplit' operation allows one to obtain two distinct random number
   -- generators.
   --
