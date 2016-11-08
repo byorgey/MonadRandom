@@ -213,6 +213,10 @@ instance (RandomGen g, Monad m) => MonadRandom (RandT g m) where
 instance (RandomGen g, Monad m) => MonadSplit g (RandT g m) where
   getSplit = RandT . state $ split
 
+instance (Monad m, RandomGen g) => MonadInterleave (RandT g m) where
+  interleave (RandT m) = liftRandT $ \g -> case split g of
+    (gl, gr) -> fmap (\p -> (fst p, gr)) $ StrictState.runStateT m gl
+
 instance (MonadState s m) => MonadState s (RandT g m) where
   get = lift get
   put = lift . put

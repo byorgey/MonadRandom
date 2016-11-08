@@ -222,6 +222,101 @@ instance (Monoid w, MonadSplit g m) => MonadSplit g (LazyWriter.WriterT w m) whe
 instance (Monoid w, MonadSplit g m) => MonadSplit g (StrictWriter.WriterT w m) where
   getSplit = lift getSplit
 
+------------------------------------------------------------
+-- MonadInterleave
+------------------------------------------------------------
+
+-- | The class 'MonadInterleave' proivides a convenient interface atop
+--   a 'split' operation on a random generator.
+class MonadRandom m => MonadInterleave m where
+
+  -- | If @x :: m a@ is a computation in some random monad, then
+  --   @interleave x@ works by splitting the generator, running @x@
+  --   using one half, and using the other half as the final generator
+  --   state of @interleave x@ (replacing whatever the final generator
+  --   state otherwise would have been).  This means that computation
+  --   needing random values which comes after @interleave x@ does not
+  --   depend on the computation of @x@.  For example:
+  --
+  --   > >>> evalRandIO $ snd <$> ((,) <$> undefined <*> getRandom)
+  --   > *** Exception: Prelude.undefined
+  --   > >>> evalRandIO $ snd <$> ((,) <$> interleave undefined <*> getRandom)
+  --   > 6192322188769041625
+  --
+  --   This can be used, for example, to allow random computations to
+  --   run in parallel, or to create lazy infinite structures of
+  --   random values.  In the example below, the infinite tree
+  --   @randTree@ cannot be evaluated lazily: even though it is cut
+  --   off at two levels deep by @hew 2@, the random value in the
+  --   right subtree still depends on generation of all the random
+  --   values in the (infinite) left subtree, even though they are
+  --   ultimately unneeded.  Inserting a call to @interleave@, as in
+  --   @randTreeI@, solves the problem: the generator splits at each
+  --   @Node@, so random values in the left and right subtrees are
+  --   generated independently.
+  --
+  --   > data Tree = Leaf | Node Int Tree Tree deriving Show
+  --   >
+  --   > hew :: Int -> Tree -> Tree
+  --   > hew 0 _ = Leaf
+  --   > hew _ Leaf = Leaf
+  --   > hew n (Node x l r) = Node x (hew (n-1) l) (hew (n-1) r)
+  --   >
+  --   > randTree :: Rand StdGen Tree
+  --   > randTree = Node <$> getRandom <*> randTree <*> randTree
+  --   >
+  --   > randTreeI :: Rand StdGen Tree
+  --   > randTreeI = interleave $ Node <$> getRandom <*> randTreeI <*> randTreeI
+  --
+  --   > >>> hew 2 <$> evalRandIO randTree
+  --   > Node 2168685089479838995 (Node (-1040559818952481847) Leaf Leaf) (Node ^CInterrupted.
+  --   > >>> hew 2 <$> evalRandIO randTreeI
+  --   > Node 8243316398511136358 (Node 4139784028141790719 Leaf Leaf) (Node 4473998613878251948 Leaf Leaf)
+  interleave :: m a -> m a
+
+instance (MonadInterleave m) => MonadInterleave (ContT r m) where
+  interleave = mapContT interleave
+
+instance (Error e, MonadInterleave m) => MonadInterleave (ErrorT e m) where
+  interleave = mapErrorT interleave
+
+instance (MonadInterleave m) => MonadInterleave (ExceptT e m) where
+  interleave = mapExceptT interleave
+
+instance (MonadInterleave m) => MonadInterleave (IdentityT m) where
+  interleave = mapIdentityT interleave
+
+instance (MonadInterleave m) => MonadInterleave (ListT m) where
+  interleave = mapListT interleave
+
+instance (MonadInterleave m) => MonadInterleave (MaybeT m) where
+  interleave = mapMaybeT interleave
+
+instance (Monoid w, MonadInterleave m) => MonadInterleave (LazyRWS.RWST r w s m) where
+  interleave = LazyRWS.mapRWST interleave
+
+instance (Monoid w, MonadInterleave m) => MonadInterleave (StrictRWS.RWST r w s m) where
+  interleave = StrictRWS.mapRWST interleave
+
+instance (MonadInterleave m) => MonadInterleave (ReaderT r m) where
+  interleave = mapReaderT interleave
+
+instance (MonadInterleave m) => MonadInterleave (LazyState.StateT s m) where
+  interleave = LazyState.mapStateT interleave
+
+instance (MonadInterleave m) => MonadInterleave (StrictState.StateT s m) where
+  interleave = StrictState.mapStateT interleave
+
+instance (Monoid w, MonadInterleave m) => MonadInterleave (LazyWriter.WriterT w m) where
+  interleave = LazyWriter.mapWriterT interleave
+
+instance (Monoid w, MonadInterleave m) => MonadInterleave (StrictWriter.WriterT w m) where
+  interleave = StrictWriter.mapWriterT interleave
+
+------------------------------------------------------------
+-- Convenience samplers
+------------------------------------------------------------
+
 -- | Sample a random value from a weighted nonempty collection of elements.
 weighted :: (F.Foldable t, MonadRandom m) => t (a, Rational) -> m a
 weighted t = do
