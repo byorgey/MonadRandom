@@ -10,26 +10,40 @@ Copyright    :  (c) Cale Gibbard 2006-2007,
                 (c) Russell O'Connor, Dan Doel and Remi Turk 2006,
                 (c) Eric Kidd 2007
 License      :  MIT-style (see the file LICENSE)
-
 Maintainer   :  byorgey@gmail.com
-Stability    :  experimental
-Portability  :  non-portable (multi-param classes, functional dependencies, undecidable instances)
 
-XXX improve docs here
+The 'MonadRandom', 'MonadSplit', and 'MonadInterleave' classes.
 
-MonadRandom, MonadSplit, and MonadInterleave classes.
+* 'MonadRandom' abstracts over monads with the capability of
+  generating random values.
+
+* 'MonadSplit' abstracts over random monads with the ability to get a
+  split generator state.  It is not very useful but kept here for
+  backwards compatibility.
+
+* 'MonadInterleave' abstracts over random monads supporting an
+  'interleave' operation, which allows sequencing computations which do
+  not depend on each other's random generator state, by splitting the
+  generator between them.
+
+This module also defines convenience functions for sampling from a
+given collection of values, either uniformly or according to given
+weights.
 
 -}
 
 module Control.Monad.Random.Class (
-    -- * MonadRandom XXX
 
+    -- * MonadRandom
     MonadRandom(..),
-    -- * MonadRandom XXX
+
+    -- * MonadSplit
     MonadSplit(..),
-    -- * MonadRandom XXX
+
+    -- * MonadInterleave
     MonadInterleave(..),
-    -- * MonadRandom XXX
+
+    -- * Sampling functions
     fromList,
     fromListMay,
     uniform,
