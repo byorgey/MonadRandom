@@ -1,3 +1,4 @@
+{-# LANGUAGE CPP                    #-}
 {-# LANGUAGE FlexibleInstances      #-}
 {-# LANGUAGE FunctionalDependencies #-}
 {-# LANGUAGE MultiParamTypeClasses  #-}
@@ -70,6 +71,11 @@ import qualified Control.Monad.Trans.Writer.Strict as StrictWriter
 import           System.Random
 
 import qualified Data.Foldable                     as F
+
+#if MIN_VERSION_base(4,8,0)
+#else
+import           Data.Monoid                       (Monoid)
+#endif
 
 ------------------------------------------------------------
 -- MonadRandom
