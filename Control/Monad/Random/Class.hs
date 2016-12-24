@@ -277,7 +277,7 @@ class MonadRandom m => MonadInterleave m where
   --   state of @interleave x@ (replacing whatever the final generator
   --   state otherwise would have been).  This means that computation
   --   needing random values which comes after @interleave x@ does not
-  --   depend on the computation of @x@.  For example:
+  --   necessarily depend on the computation of @x@.  For example:
   --
   --   > >>> evalRandIO $ snd <$> ((,) <$> undefined <*> getRandom)
   --   > *** Exception: Prelude.undefined
@@ -299,7 +299,7 @@ class MonadRandom m => MonadInterleave m where
   --   > data Tree = Leaf | Node Int Tree Tree deriving Show
   --   >
   --   > hew :: Int -> Tree -> Tree
-  --   > hew 0 _ = Leaf
+  --   > hew 0 _    = Leaf
   --   > hew _ Leaf = Leaf
   --   > hew n (Node x l r) = Node x (hew (n-1) l) (hew (n-1) r)
   --   >
@@ -358,7 +358,9 @@ instance (Monoid w, MonadInterleave m) => MonadInterleave (StrictWriter.WriterT 
 -- Convenience samplers
 ------------------------------------------------------------
 
--- | Sample a random value from a weighted nonempty collection of elements.
+-- | Sample a random value from a weighted nonempty collection of
+--   elements.  Crashes with a call to @error@ if the collection is
+--   empty or the total weight is zero.
 weighted :: (F.Foldable t, MonadRandom m) => t (a, Rational) -> m a
 weighted t = do
   ma <- weightedMay t
@@ -367,7 +369,7 @@ weighted t = do
     Just a  -> return a
 
 -- | Sample a random value from a weighted collection of elements.
---   Return @Nothing@ if the collection is empty or the total weight is
+--   Returns @Nothing@ if the collection is empty or the total weight is
 --   zero.
 weightedMay :: (F.Foldable t, MonadRandom m) => t (a, Rational) -> m (Maybe a)
 weightedMay = fromListMay . F.toList
