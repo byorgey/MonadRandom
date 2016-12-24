@@ -57,6 +57,7 @@ import           Control.Arrow                    (first)
 import           Control.Monad
 import           Control.Monad.Cont.Class
 import           Control.Monad.Error.Class
+import qualified Control.Monad.Fail               as Fail
 import           Control.Monad.Fix
 import           Control.Monad.IO.Class
 import           Control.Monad.Primitive
@@ -222,6 +223,9 @@ instance (MonadState s m) => MonadState s (RandT g m) where
 instance PrimMonad m => PrimMonad (RandT s m) where
   type PrimState (RandT s m) = PrimState m
   primitive = lift . primitive
+
+instance Fail.MonadFail m => Fail.MonadFail (RandT g m) where
+  fail = lift . Fail.fail
 
 -- | Uniform lifting of a @callCC@ operation to the new monad.
 -- This version rolls back to the original state on entering the

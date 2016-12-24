@@ -18,7 +18,7 @@
   - Add lazy and strict variants of `RandT`.
   - Add `MonadRandom` and `MonadSplit` instances for `ListT`.
   - Add (but do not export) `unRandT` field to `RandT`.
-  - Add `MonadCont`, `MonadError`, `MonadRWS`, and `PrimMonad`
+  - Add `MonadCont`, `MonadError`, `MonadRWS`, `PrimMonad`, and `MonadFail`
     instances for `RandT`.
   - Add `evalRandTIO` operation.
 
