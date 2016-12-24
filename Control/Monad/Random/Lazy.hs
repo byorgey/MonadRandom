@@ -2,20 +2,20 @@
 
 {- |
 Module       :  Control.Monad.Random.Lazy
-Copyright    :  (c) Cale Gibbard 2006-2007,
-                (c) Russell O'Connor, Dan Doel and Remi Turk 2006,
-                (c) Eric Kidd 2007
-License      :  MIT-style (see the file LICENSE)
+Copyright    :  (c) Brent Yorgey 2016
+License      :  BSD3 (see LICENSE)
 
 Maintainer   :  byorgey@gmail.com
 Stability    :  experimental
 Portability  :  non-portable (multi-param classes, functional dependencies, undecidable instances)
 
-Lazy random monads.
+Random monads that are lazy in the generator state. For a strict
+version, see "Control.Monad.Random.Strict", which has the same
+interface.
 -}
 
 module Control.Monad.Random.Lazy
-    ( -- * The Rand monad transformer
+    ( -- * The Rand monad
       Rand,
       liftRand,
       runRand,

@@ -2,16 +2,15 @@
 
 {- |
 Module       :  Control.Monad.Random
-Copyright    :  (c) Cale Gibbard 2006-2007,
-                (c) Russell O'Connor, Dan Doel and Remi Turk 2006,
-                (c) Eric Kidd 2007
-License      :  MIT-style (see the file LICENSE)
+Copyright    :  (c) Brent Yorgey 2016
+License      :  BSD3 (see LICENSE)
 
 Maintainer   :  byorgey@gmail.com
 Stability    :  experimental
 Portability  :  non-portable (multi-param classes, functional dependencies, undecidable instances)
 
-Declaration of MonadRandom and MonadSplit classes.
+This module is provided for backwards compatibility, and simply
+re-exports "Control.Monad.Random.Lazy".
 -}
 
 module Control.Monad.Random

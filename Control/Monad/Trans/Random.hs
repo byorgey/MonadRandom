@@ -2,10 +2,8 @@
 
 {- |
 Module       :  Control.Monad.Trans.Random
-Copyright    :  (c) Cale Gibbard 2006-2007,
-                (c) Russell O'Connor, Dan Doel and Remi Turk 2006,
-                (c) Eric Kidd 2007
-License      :  MIT-style (see the file LICENSE)
+Copyright    :  (c) Brent Yorgey 2016
+License      :  BSD3 (see LICENSE)
 
 Maintainer   :  byorgey@gmail.com
 Stability    :  experimental
