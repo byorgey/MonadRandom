@@ -33,12 +33,12 @@ module Control.Monad.Random.Strict
       mapRandT,
       withRandT,
       evalRandTIO,
-      -- * Strict random monads
+      -- * Some convenience re-exports
+
       module Control.Monad.Random.Class,
       module Control.Monad,
       module Control.Monad.Fix,
       module Control.Monad.Trans,
-      module Data.Monoid,
     ) where
 
 import           Control.Monad.Random.Class
@@ -54,4 +54,3 @@ import           Control.Monad.Trans.Random.Strict (Rand, RandT, evalRand,
 
 import           Control.Monad
 import           Control.Monad.Fix
-import           Data.Monoid

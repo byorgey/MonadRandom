@@ -24,6 +24,7 @@ module Control.Monad.Random.Lazy
       mapRand,
       withRand,
       evalRandIO,
+
       -- * The RandT monad transformer
       RandT,
       liftRandT,
@@ -33,12 +34,13 @@ module Control.Monad.Random.Lazy
       mapRandT,
       withRandT,
       evalRandTIO,
-      -- * Lazy random monads
+
+      -- * Some convenience re-exports
+
       module Control.Monad.Random.Class,
       module Control.Monad,
       module Control.Monad.Fix,
       module Control.Monad.Trans,
-      module Data.Monoid,
     ) where
 
 import           Control.Monad.Random.Class
@@ -54,4 +56,3 @@ import           Control.Monad.Trans.Random.Lazy (Rand, RandT, evalRand,
 
 import           Control.Monad
 import           Control.Monad.Fix
-import           Data.Monoid
