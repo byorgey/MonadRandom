@@ -1,27 +1,42 @@
 0.5 (XXX)
 -------------------
 
+  This release has quite a few small additions as well as a big module
+  reorganization.  However, thanks to module re-exports, most existing
+  code using the library should continue to work with no changes; the
+  major version bump reflects the large reorganization and my
+  inability to 100% guarantee that existing user code will not break.
+
+  The biggest changes that may be of interest to users of the library
+  include new lazy vs strict variants of the `Rand` monad; a new
+  `MonadInterleave` class which is a big improvement over
+  `MonadSplit`; new `PrimMonad` instances; and new random selection
+  functions like `weighted`, `weightedMay`, `uniformMay`, *etc.*.  See
+  the list below for full details.
+
   - Refactor to reflect structure of `mtl` and `transformers` libraries.
-  - Improve documentation.
   - Add lazy and strict variants of `RandT`.
   - Add `MonadRandom` and `MonadSplit` instances for `ListT`.
   - Add (but do not export) `unRandT` field to `RandT`.
-  - Add `MonadCont`, `MonadError`, `MonadRWS`, and `PrimMonad` instances for `RandT`.
-  - Add signatures for `RandT` operations that require specialized lifting (see "Control.Monad.Signatures").
+  - Add `MonadCont`, `MonadError`, `MonadRWS`, and `PrimMonad`
+    instances for `RandT`.
   - Add `evalRandTIO` operation.
 
+  - Move `fromList` and `uniform` operations to
+    "Control.Monad.Random.Class".
+  - `fromList` now raises an error when the total weight of elements
+    is zero.
+  - Generalize the type of `uniform` to work over any `Foldable`.
+  - Add new operations `weighted`, `weightedMay`, `fromListMay`, and
+    `uniformMay`.  `weighted` is like `fromList` but generalized to
+    work over any `Foldable`.  The `May` variants return a `Maybe`
+    result instead of raising an error.
 
-  - Move `fromList` and `uniform` operations to "Control.Monad.Random.Class".
-  - `fromList` operation raises error with total weight of elements is zero.
+  - New `MonadInterleave` class for random monads which can interleave
+    random generation using `split`.  In some ways this is similar to
+    `MonadSplit` but much more useful.
 
-  This patch requires a major version bump, as it may incur breaking changes
-  for modules that import `Control.Monad.Random` only. All modules have been
-  refactored to better reflect the structure of the `mtl` and `transformers`
-  libraries.
-
-  Lazy and strict variants of `RandT` are implemented, with lazy as the
-  default. Instances of all `mtl` classes are provided for `RandT`. Instances
-  of `MonadRandom` and `MonadSplit` are provided for all `transformers` types.
+  - Improve documentation.
 
 0.4.2.3 (21 April 2016)
 -----------------------
