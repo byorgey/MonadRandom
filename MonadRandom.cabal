@@ -2,7 +2,7 @@ name:                MonadRandom
 version:             0.5
 synopsis:            Random-number generation monad.
 description:         Support for computations which consume random values.
-license:             OtherLicense
+license:             BSD3
 license-file:        LICENSE
 author:              Cale Gibbard and others
 maintainer:          Brent Yorgey <byorgey@gmail.com>
