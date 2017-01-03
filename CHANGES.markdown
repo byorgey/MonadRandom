@@ -37,7 +37,7 @@
     instances for `RandT`.
   - Add `evalRandTIO` operation.
   - Move `fromList` and `uniform` operations to
-    "Control.Monad.Random.Class".
+    `Control.Monad.Random.Class`.
   - `fromList` now raises an error when the total weight of elements
     is zero.
   - Generalize the type of `uniform` to work over any `Foldable`.
