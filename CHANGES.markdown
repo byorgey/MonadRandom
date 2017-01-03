@@ -1,5 +1,5 @@
-0.5 (XXX)
--------------------
+0.5 (3 January 2016)
+--------------------
 
   This release has quite a few small additions as well as a big module
   reorganization.  However, thanks to module re-exports, most existing
