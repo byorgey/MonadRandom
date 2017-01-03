@@ -14,6 +14,21 @@
   functions like `weighted`, `weightedMay`, `uniformMay`, *etc.*.  See
   the list below for full details.
 
+  Although there was some discussion of generalizing `MonadRandom` to
+  work for a wider range of underlying generators
+  (see
+  [#26](https://github.com/byorgey/MonadRandom/issues/26),
+  [#31](https://github.com/byorgey/MonadRandom/issues/31), and
+  [comments on this blog post](https://byorgey.wordpress.com/2016/11/16/monadrandom-0-5-and-mwc-random-feedback-wanted/)),
+  I decided to punt on that for now. It seems rather complicated and
+  there
+  are
+  [already good alternatives](http://hackage.haskell.org/package/random%2Dfu) so
+  I decided to keep things simple for this release.  I'm still open to
+  proposals for generalizing future releases.
+
+  Changes in 0.5 include:
+
   - Refactor to reflect structure of `mtl` and `transformers` libraries.
   - Add lazy and strict variants of `RandT`.
   - Add `MonadRandom` and `MonadSplit` instances for `ListT`.
@@ -36,7 +51,7 @@
     random generation using `split`.  In some ways this is similar to
     `MonadSplit` but much more useful.
 
-  - Improve documentation.
+  - Improved documentation.
 
 0.4.2.3 (21 April 2016)
 -----------------------
