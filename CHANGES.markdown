@@ -36,7 +36,6 @@
   - Add `MonadCont`, `MonadError`, `MonadRWS`, `PrimMonad`, and `MonadFail`
     instances for `RandT`.
   - Add `evalRandTIO` operation.
-
   - Move `fromList` and `uniform` operations to
     "Control.Monad.Random.Class".
   - `fromList` now raises an error when the total weight of elements
@@ -46,11 +45,9 @@
     `uniformMay`.  `weighted` is like `fromList` but generalized to
     work over any `Foldable`.  The `May` variants return a `Maybe`
     result instead of raising an error.
-
   - New `MonadInterleave` class for random monads which can interleave
     random generation using `split`.  In some ways this is similar to
     `MonadSplit` but much more useful.
-
   - Improved documentation.
 
 0.4.2.3 (21 April 2016)
