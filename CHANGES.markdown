@@ -1,4 +1,10 @@
-0.5 (3 January 2016)
+0.5.1 (9 February 2017)
+-----------------------
+
+Re-export `System.Random` from `Control.Monad.Random.{Lazy,Strict}`
+and hence also from `Control.Monad.Random`.
+
+0.5 (3 January 2017)
 --------------------
 
   This release has quite a few small additions as well as a big module
