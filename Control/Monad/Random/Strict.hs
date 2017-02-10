@@ -35,11 +35,14 @@ module Control.Monad.Random.Strict
       evalRandTIO,
       -- * Some convenience re-exports
 
+      module System.Random,
       module Control.Monad.Random.Class,
       module Control.Monad,
       module Control.Monad.Fix,
       module Control.Monad.Trans,
     ) where
+
+import           System.Random
 
 import           Control.Monad.Random.Class
 
