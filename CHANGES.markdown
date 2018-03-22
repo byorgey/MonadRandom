@@ -4,6 +4,8 @@
 Re-export `System.Random` from `Control.Monad.Random.{Lazy,Strict}`
 and hence also from `Control.Monad.Random`.
 
+- Hackage r1: allow `transformers-compat-0.6.x`.
+
 0.5 (3 January 2017)
 --------------------
 
