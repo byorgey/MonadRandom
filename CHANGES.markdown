@@ -1,3 +1,9 @@
+0.5.1.2 (18 Jan 2020)
+---------------------
+
+- Better error message when total probability sum is negative in
+  fromListMay, weightedMay, weighted
+
 0.5.1.1 (21 May 2018)
 ---------------------
 
