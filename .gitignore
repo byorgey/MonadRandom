@@ -13,3 +13,4 @@ TAGS
 cabal.sandbox.config
 /stack.yaml
 .stack-work
+stack.yaml.lock
