@@ -365,7 +365,7 @@ weighted :: (F.Foldable t, MonadRandom m) => t (a, Rational) -> m a
 weighted t = do
   ma <- weightedMay t
   case ma of
-    Nothing -> error "Control.Monad.Random.Class.weighted: empty collection, or total weight = 0"
+    Nothing -> error "Control.Monad.Random.Class.weighted: empty collection, or total weight <= 0"
     Just a  -> return a
 
 -- | Sample a random value from a weighted collection of elements.
@@ -384,14 +384,14 @@ fromList ws = do
     Just a  -> return a
 
 -- | Sample a random value from a weighted list.  Return @Nothing@ if
---   the list is empty or the total weight is zero.
+--   the list is empty or the total weight is nonpositive.
 fromListMay :: (MonadRandom m) => [(a, Rational)] -> m (Maybe a)
 fromListMay xs = do
   let s    = fromRational (sum (map snd xs)) :: Double
       cums = scanl1 (\ ~(_,q) ~(y,s') -> (y, s'+q)) xs
-  case s of
-    0 -> return Nothing
-    _ -> do
+  case s <= 0 of
+    True -> return Nothing
+    _    -> do
       p <- liftM toRational $ getRandomR (0, s)
       return . Just . fst . head . dropWhile ((< p) . snd) $ cums
 
