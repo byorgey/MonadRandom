@@ -66,7 +66,7 @@ import qualified Control.Monad.Trans.State.Lazy    as LazyState
 import qualified Control.Monad.Trans.State.Strict  as StrictState
 import qualified Control.Monad.Trans.Writer.Lazy   as LazyWriter
 import qualified Control.Monad.Trans.Writer.Strict as StrictWriter
-import           System.Random
+import qualified System.Random                     as Random
 
 import qualified Data.Foldable                     as F
 
@@ -91,7 +91,7 @@ class (Monad m) => MonadRandom m where
   -- interval.
   --
   -- See 'System.Random.randomR' for details.
-  getRandomR :: (Random a) => (a, a) -> m a
+  getRandomR :: (Random.Random a) => (a, a) -> m a
 
   -- | The same as 'getRandomR', but using a default range determined by the type:
   --
@@ -104,25 +104,25 @@ class (Monad m) => MonadRandom m where
   -- * For 'Integer', the range is (arbitrarily) the range of 'Int'.
   --
   -- See 'System.Random.random' for details.
-  getRandom :: (Random a) => m a
+  getRandom :: (Random.Random a) => m a
 
   -- | Plural variant of 'getRandomR', producing an infinite list of
   -- random values instead of returning a new generator.
   --
   -- See 'System.Random.randomRs' for details.
-  getRandomRs :: (Random a) => (a, a) -> m [a]
+  getRandomRs :: (Random.Random a) => (a, a) -> m [a]
 
   -- | Plural variant of 'getRandom', producing an infinite list of
   -- random values instead of returning a new generator.
   --
   -- See 'System.Random.randoms' for details.
-  getRandoms :: (Random a) => m [a]
+  getRandoms :: (Random.Random a) => m [a]
 
 instance MonadRandom IO where
-  getRandomR       = randomRIO
-  getRandom        = randomIO
-  getRandomRs lohi = liftM (randomRs lohi) newStdGen
-  getRandoms       = liftM randoms newStdGen
+  getRandomR       = Random.randomRIO
+  getRandom        = Random.randomIO
+  getRandomRs lohi = liftM (Random.randomRs lohi) Random.newStdGen
+  getRandoms       = liftM Random.randoms Random.newStdGen
 
 instance (MonadRandom m) => MonadRandom (ContT r m) where
   getRandomR  = lift . getRandomR
@@ -221,8 +221,8 @@ class (Monad m) => MonadSplit g m | m -> g where
   -- See 'System.Random.split' for details.
   getSplit :: m g
 
-instance MonadSplit StdGen IO where
-  getSplit = newStdGen
+instance MonadSplit Random.StdGen IO where
+  getSplit = Random.newStdGen
 
 instance (MonadSplit g m) => MonadSplit g (ContT r m) where
   getSplit = lift getSplit
