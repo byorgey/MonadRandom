@@ -1,3 +1,9 @@
+0.5.2 (24 June 2020)
+--------------------
+
+- Support for `random-1.2`.
+- Drop support for GHC 7.4, test with GHC 8.10.
+
 0.5.1.2 (18 Jan 2020)
 ---------------------
 
