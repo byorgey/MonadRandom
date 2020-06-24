@@ -44,7 +44,7 @@ module Control.Monad.Random.Lazy
       module Control.Monad.Trans,
     ) where
 
-import           System.Random
+import           System.Random hiding (uniform, uniformR)
 
 import           Control.Monad.Random.Class
 
