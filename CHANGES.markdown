@@ -1,3 +1,10 @@
+0.5.3 (xx xxxx 2021)
+--------------------
+
+- `StatefulGen` instances for `RandT`
+- Addition of `RandGen`
+- Additioon of `withRandGen` and `withRandGen_`
+
 0.5.2 (24 June 2020)
 --------------------
 
