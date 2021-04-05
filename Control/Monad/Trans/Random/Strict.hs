@@ -1,3 +1,4 @@
+{-# LANGUAGE CPP                        #-}
 {-# LANGUAGE FlexibleInstances          #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE MultiParamTypeClasses      #-}
@@ -71,7 +72,11 @@ import           Control.Monad.Signatures
 import           Control.Monad.Trans.Class
 import qualified Control.Monad.Trans.State.Strict as StrictState
 import           Data.Functor.Identity
+#if MIN_VERSION_random(1,2,0)
 import           System.Random.Stateful
+#else
+import           System.Random
+#endif
 
 -- | A random monad parameterized by the type @g@ of the generator to carry.
 --
@@ -273,6 +278,7 @@ evalRandTIO t = liftIO newStdGen >>= evalRandT t
 -- @since 0.5.3
 data RandGen g = RandGen
 
+#if MIN_VERSION_random(1,2,0)
 -- |
 --
 -- @since 0.5.3
@@ -293,7 +299,7 @@ instance (Monad m, RandomGen g) => RandomGenM (RandGen g) g (RandT g m) where
 
 applyRandT :: Applicative m => (g -> (a, g)) -> RandGen g -> RandT g m a
 applyRandT f _ = liftRandT (pure . f)
-
+#endif
 
 -- | A `RandT` runner that allows using it with `StatefulGen` restricted actions. Returns
 -- the outcome of random computation and the new pseudo-random-number generator
