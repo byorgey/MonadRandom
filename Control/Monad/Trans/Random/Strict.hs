@@ -1,3 +1,4 @@
+{-# LANGUAGE CPP                        #-}
 {-# LANGUAGE FlexibleInstances          #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE MultiParamTypeClasses      #-}
@@ -47,6 +48,10 @@ module Control.Monad.Trans.Random.Strict
     liftCatch,
     liftListen,
     liftPass,
+    -- * StatefulGen interface
+    RandGen(..),
+    withRandGen,
+    withRandGen_,
     -- * Examples
     -- ** Random monads
     -- $examples
@@ -67,7 +72,11 @@ import           Control.Monad.Signatures
 import           Control.Monad.Trans.Class
 import qualified Control.Monad.Trans.State.Strict as StrictState
 import           Data.Functor.Identity
+#if MIN_VERSION_random(1,2,0)
+import           System.Random.Stateful
+#else
 import           System.Random
+#endif
 
 -- | A random monad parameterized by the type @g@ of the generator to carry.
 --
@@ -261,6 +270,67 @@ evalRandIO t = liftM (evalRand t) newStdGen
 -- computation.
 evalRandTIO :: (MonadIO m) => RandT StdGen m a -> m a
 evalRandTIO t = liftIO newStdGen >>= evalRandT t
+
+
+-- | A proxy that carries information about the type of generator to use with @RandT@
+-- monad and its `StatefulGen` instance.
+--
+-- @since 0.5.3
+data RandGen g = RandGen
+
+#if MIN_VERSION_random(1,2,0)
+-- |
+--
+-- @since 0.5.3
+instance (Monad m, RandomGen g) => StatefulGen (RandGen g) (RandT g m) where
+  uniformWord32R r = applyRandT (genWord32R r)
+  uniformWord64R r = applyRandT (genWord64R r)
+  uniformWord8 = applyRandT genWord8
+  uniformWord16 = applyRandT genWord16
+  uniformWord32 = applyRandT genWord32
+  uniformWord64 = applyRandT genWord64
+  uniformShortByteString n = applyRandT (genShortByteString n)
+
+-- |
+--
+-- @since 0.5.3
+instance (Monad m, RandomGen g) => RandomGenM (RandGen g) g (RandT g m) where
+  applyRandomGenM = applyRandT
+
+applyRandT :: Applicative m => (g -> (a, g)) -> RandGen g -> RandT g m a
+applyRandT f _ = liftRandT (pure . f)
+#endif
+
+-- | A `RandT` runner that allows using it with `StatefulGen` restricted actions. Returns
+-- the outcome of random computation and the new pseudo-random-number generator
+--
+-- >>> withRandGen (mkStdGen 2021) uniformM :: IO (Int, StdGen)
+-- (6070831465987696718,StdGen {unStdGen = SMGen 4687568268719557181 4805600293067301895})
+--
+-- @since 0.5.3
+withRandGen ::
+     g
+  -- ^ initial generator
+  -> (RandGen g -> RandT g m a)
+  -> m (a, g)
+  -- ^ return value and final generator
+withRandGen g action = runRandT (action RandGen) g
+
+-- | Same as `withRandGen`, but discards the resulting generator.
+--
+-- >>> withRandGen_ (mkStdGen 2021) uniformM :: IO Int
+-- 6070831465987696718
+--
+-- @since 0.5.3
+withRandGen_ ::
+     Monad m
+  => g
+  -- ^ initial generator
+  -> (RandGen g -> RandT g m a)
+  -> m a
+  -- ^ return value and final generator
+withRandGen_ g action = evalRandT (action RandGen) g
+
 
 {- $examples
 
