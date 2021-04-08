@@ -1,4 +1,4 @@
-0.5.3 (xx xxxx 2021)
+0.5.3 (8 April 2021)
 --------------------
 
 - `StatefulGen` instances for `RandT`
