@@ -7,6 +7,7 @@
 
 - r1 (28 April 2021): require `base >= 4.6`
 - r2 (9 Aug 2021): allow `transformers-compat-0.7`.
+- r3 (9 Aug 2022): allow `base-4.17` (GHC 9.4).
 
 0.5.2 (24 June 2020)
 --------------------
