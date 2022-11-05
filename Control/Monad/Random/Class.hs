@@ -54,10 +54,8 @@ module Control.Monad.Random.Class (
 import           Control.Monad
 import           Control.Monad.Trans.Class
 import           Control.Monad.Trans.Cont
-import           Control.Monad.Trans.Error
 import           Control.Monad.Trans.Except
 import           Control.Monad.Trans.Identity
-import           Control.Monad.Trans.List
 import           Control.Monad.Trans.Maybe
 import           Control.Monad.Trans.Reader
 import qualified Control.Monad.Trans.RWS.Lazy      as LazyRWS
@@ -130,12 +128,6 @@ instance (MonadRandom m) => MonadRandom (ContT r m) where
   getRandomRs = lift . getRandomRs
   getRandoms  = lift getRandoms
 
-instance (Error e, MonadRandom m) => MonadRandom (ErrorT e m) where
-  getRandomR  = lift . getRandomR
-  getRandom   = lift getRandom
-  getRandomRs = lift . getRandomRs
-  getRandoms  = lift getRandoms
-
 instance (MonadRandom m) => MonadRandom (ExceptT e m) where
   getRandomR  = lift . getRandomR
   getRandom   = lift getRandom
@@ -143,12 +135,6 @@ instance (MonadRandom m) => MonadRandom (ExceptT e m) where
   getRandoms  = lift getRandoms
 
 instance (MonadRandom m) => MonadRandom (IdentityT m) where
-  getRandomR  = lift . getRandomR
-  getRandom   = lift getRandom
-  getRandomRs = lift . getRandomRs
-  getRandoms  = lift getRandoms
-
-instance (MonadRandom m) => MonadRandom (ListT m) where
   getRandomR  = lift . getRandomR
   getRandom   = lift getRandom
   getRandomRs = lift . getRandomRs
@@ -227,16 +213,10 @@ instance MonadSplit Random.StdGen IO where
 instance (MonadSplit g m) => MonadSplit g (ContT r m) where
   getSplit = lift getSplit
 
-instance (Error e, MonadSplit g m) => MonadSplit g (ErrorT e m) where
-  getSplit = lift getSplit
-
 instance (MonadSplit g m) => MonadSplit g (ExceptT e m) where
   getSplit = lift getSplit
 
 instance (MonadSplit g m) => MonadSplit g (IdentityT m) where
-  getSplit = lift getSplit
-
-instance (MonadSplit g m) => MonadSplit g (ListT m) where
   getSplit = lift getSplit
 
 instance (MonadSplit g m) => MonadSplit g (MaybeT m) where
@@ -318,17 +298,11 @@ class MonadRandom m => MonadInterleave m where
 instance (MonadInterleave m) => MonadInterleave (ContT r m) where
   interleave = mapContT interleave
 
-instance (Error e, MonadInterleave m) => MonadInterleave (ErrorT e m) where
-  interleave = mapErrorT interleave
-
 instance (MonadInterleave m) => MonadInterleave (ExceptT e m) where
   interleave = mapExceptT interleave
 
 instance (MonadInterleave m) => MonadInterleave (IdentityT m) where
   interleave = mapIdentityT interleave
-
-instance (MonadInterleave m) => MonadInterleave (ListT m) where
-  interleave = mapListT interleave
 
 instance (MonadInterleave m) => MonadInterleave (MaybeT m) where
   interleave = mapMaybeT interleave

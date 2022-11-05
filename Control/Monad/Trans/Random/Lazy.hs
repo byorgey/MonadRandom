@@ -56,27 +56,28 @@ module Control.Monad.Trans.Random.Lazy
     -- $examples
   ) where
 
-import           Control.Applicative
-import           Control.Arrow                  (first)
-import           Control.Monad
-import           Control.Monad.Cont.Class
-import           Control.Monad.Error.Class
-import qualified Control.Monad.Fail             as Fail
-import           Control.Monad.Fix
-import           Control.Monad.IO.Class
-import           Control.Monad.Primitive
-import           Control.Monad.Random.Class
-import           Control.Monad.RWS.Class
-import           Control.Monad.Signatures
-import           Control.Monad.Trans.Class
+import Control.Applicative ( Alternative )
+import Control.Arrow (first)
+import Control.Monad ( liftM, MonadPlus )
+import Control.Monad.Cont.Class (MonadCont(..))
+import Control.Monad.Error.Class ( MonadError(..) )
+import qualified Control.Monad.Fail as Fail
+import Control.Monad.Fix ( MonadFix )
+import Control.Monad.IO.Class ( MonadIO(..) )
+import Control.Monad.Primitive ( PrimMonad(..) )
+import Control.Monad.Random.Class ( MonadInterleave(..), MonadSplit(..), MonadRandom(..) )
+import Control.Monad.RWS.Class ( MonadState(..), MonadRWS, MonadReader, MonadWriter )
+import Control.Monad.Signatures ( Listen, Pass, CallCC, Catch )
+import Control.Monad.Trans.Class ( MonadTrans(..) )
 import qualified Control.Monad.Trans.State.Lazy as LazyState
-import           Control.Monad.Trans.Random.Strict (RandGen(..))
-import           Data.Functor.Identity
+import Control.Monad.Trans.Random.Strict (RandGen(..))
+import Data.Functor.Identity ( Identity(runIdentity) )
 #if MIN_VERSION_random(1,2,0)
 import           System.Random.Stateful
 #else
 import           System.Random
 #endif
+
 -- | A random monad parameterized by the type @g@ of the generator to carry.
 --
 -- The 'return' function leaves the generator unchanged, while '>>=' uses the
