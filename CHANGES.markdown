@@ -1,3 +1,10 @@
+0.6 (5 Nov 2022)
+----------------
+
+- Remove instances for deprecated `ErrorT` and `ListT` transformers
+- Allow building with `transformers-0.6` and `mtl-2.3.1`
+- Drop support for GHC 7.6 and 7.8
+
 0.5.3 (8 April 2021)
 --------------------
 
