@@ -5,6 +5,8 @@
 - Allow building with `transformers-0.6` and `mtl-2.3.1`
 - Drop support for GHC 7.6 and 7.8
 
+- r1 (18 Dec 2022): require `base >= 4.8`
+
 0.5.3 (8 April 2021)
 --------------------
 
