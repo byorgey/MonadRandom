@@ -8,6 +8,7 @@
 - r1 (18 Dec 2022): require `base >= 4.8`
 - r2 (9 Jan 2023): require `random >= 1.0.1`
 - r3 (22 Feb 2023): allow `primitive-0.8`
+- r4 (12 Oct 2023): allow `primitive-0.9`, test on GHC 9.6 and 9.8
 
 0.5.3 (8 April 2021)
 --------------------
