@@ -65,8 +65,8 @@ import qualified Control.Monad.Trans.State.Strict  as StrictState
 import qualified Control.Monad.Trans.Writer.Lazy   as LazyWriter
 import qualified Control.Monad.Trans.Writer.Strict as StrictWriter
 import qualified System.Random                     as Random
-
 import qualified Data.Foldable                     as F
+import Data.Word (Word64)
 
 #if MIN_VERSION_base(4,8,0)
 #else
@@ -361,12 +361,13 @@ fromList ws = do
 --   the list is empty or the total weight is nonpositive.
 fromListMay :: (MonadRandom m) => [(a, Rational)] -> m (Maybe a)
 fromListMay xs = do
-  let s    = fromRational (sum (map snd xs)) :: Double
+  let s    = sum (map snd xs)
       cums = scanl1 (\ ~(_,q) ~(y,s') -> (y, s'+q)) xs
   case s <= 0 of
     True -> return Nothing
     _    -> do
-      p <- liftM toRational $ getRandomR (0, s)
+      w <- getRandom
+      let p = s * toRational (w :: Word64) / toRational (maxBound :: Word64)
       return . Just . fst . head . dropWhile ((< p) . snd) $ cums
 
 -- | Sample a value uniformly from a nonempty collection of elements.
