@@ -353,15 +353,19 @@ fromList ws = do
 
 -- | Sample a random value from a weighted list.  Return @Nothing@ if
 --   the list is empty or the total weight is nonpositive.
-fromListMay :: (MonadRandom m) => [(a, Rational)] -> m (Maybe a)
+fromListMay :: MonadRandom m => [(a, Rational)] -> m (Maybe a)
 fromListMay xs = do
-  let s    = sum (map snd xs)
-      cums = scanl1 (\ ~(_,q) ~(y,s') -> (y, s'+q)) xs
-  case s <= 0 of
-    True -> return Nothing
-    _    -> do
+  let s = sum (map snd xs)
+      cums = scanl1 (\ ~(_, q) ~(y, s') -> (y, s' + q)) xs
+  if s <= 0
+    then return Nothing
+    else do
+      -- Pick a Word64 value uniformly
       w <- getRandom
-      let p = s * toRational (w :: Word64) / toRational (maxBound :: Word64)
+      -- w / maxBound gives a uniform Rational in the range [0,1].
+      -- Subtract from 1 to match the way uniform Double values are
+      -- generated, and hence match the old behavior of this function.
+      let p = s * (1 - toRational (w :: Word64) / toRational (maxBound :: Word64))
       return . Just . fst . head . dropWhile ((< p) . snd) $ cums
 
 -- | Sample a value uniformly from a nonempty collection of elements.
