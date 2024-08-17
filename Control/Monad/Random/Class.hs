@@ -1,72 +1,68 @@
-{-# LANGUAGE CPP                    #-}
-{-# LANGUAGE FlexibleInstances      #-}
+{-# LANGUAGE CPP #-}
+{-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE FunctionalDependencies #-}
-{-# LANGUAGE MultiParamTypeClasses  #-}
-{-# LANGUAGE Safe                   #-}
-{-# LANGUAGE UndecidableInstances   #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE Safe #-}
+{-# LANGUAGE UndecidableInstances #-}
 
-{- |
-Module       :  Control.Monad.Random.Class
-Copyright    :  (c) Brent Yorgey 2016
-License      :  BSD3 (see LICENSE)
-Maintainer   :  byorgey@gmail.com
-
-The 'MonadRandom', 'MonadSplit', and 'MonadInterleave' classes.
-
-* 'MonadRandom' abstracts over monads with the capability of
-  generating random values.
-
-* 'MonadSplit' abstracts over random monads with the ability to get a
-  split generator state.  It is not very useful but kept here for
-  backwards compatibility.
-
-* 'MonadInterleave' abstracts over random monads supporting an
-  'interleave' operation, which allows sequencing computations which do
-  not depend on each other's random generator state, by splitting the
-  generator between them.
-
-This module also defines convenience functions for sampling from a
-given collection of values, either uniformly or according to given
-weights.
-
--}
-
+-- |
+-- Module       :  Control.Monad.Random.Class
+-- Copyright    :  (c) Brent Yorgey 2016
+-- License      :  BSD3 (see LICENSE)
+-- Maintainer   :  byorgey@gmail.com
+--
+-- The 'MonadRandom', 'MonadSplit', and 'MonadInterleave' classes.
+--
+-- * 'MonadRandom' abstracts over monads with the capability of
+--   generating random values.
+--
+-- * 'MonadSplit' abstracts over random monads with the ability to get a
+--   split generator state.  It is not very useful but kept here for
+--   backwards compatibility.
+--
+-- * 'MonadInterleave' abstracts over random monads supporting an
+--   'interleave' operation, which allows sequencing computations which do
+--   not depend on each other's random generator state, by splitting the
+--   generator between them.
+--
+-- This module also defines convenience functions for sampling from a
+-- given collection of values, either uniformly or according to given
+-- weights.
 module Control.Monad.Random.Class (
+  -- * MonadRandom
+  MonadRandom (..),
 
-    -- * MonadRandom
-    MonadRandom(..),
+  -- * MonadSplit
+  MonadSplit (..),
 
-    -- * MonadSplit
-    MonadSplit(..),
+  -- * MonadInterleave
+  MonadInterleave (..),
 
-    -- * MonadInterleave
-    MonadInterleave(..),
+  -- * Sampling functions
+  fromList,
+  fromListMay,
+  uniform,
+  uniformMay,
+  weighted,
+  weightedMay,
+) where
 
-    -- * Sampling functions
-    fromList,
-    fromListMay,
-    uniform,
-    uniformMay,
-    weighted,
-    weightedMay
-    ) where
-
-import           Control.Monad
-import           Control.Monad.Trans.Class
-import           Control.Monad.Trans.Cont
-import           Control.Monad.Trans.Except
-import           Control.Monad.Trans.Identity
-import           Control.Monad.Trans.Maybe
-import           Control.Monad.Trans.Reader
-import qualified Control.Monad.Trans.RWS.Lazy      as LazyRWS
-import qualified Control.Monad.Trans.RWS.Strict    as StrictRWS
-import qualified Control.Monad.Trans.State.Lazy    as LazyState
-import qualified Control.Monad.Trans.State.Strict  as StrictState
-import qualified Control.Monad.Trans.Writer.Lazy   as LazyWriter
+import Control.Monad
+import Control.Monad.Trans.Class
+import Control.Monad.Trans.Cont
+import Control.Monad.Trans.Except
+import Control.Monad.Trans.Identity
+import Control.Monad.Trans.Maybe
+import qualified Control.Monad.Trans.RWS.Lazy as LazyRWS
+import qualified Control.Monad.Trans.RWS.Strict as StrictRWS
+import Control.Monad.Trans.Reader
+import qualified Control.Monad.Trans.State.Lazy as LazyState
+import qualified Control.Monad.Trans.State.Strict as StrictState
+import qualified Control.Monad.Trans.Writer.Lazy as LazyWriter
 import qualified Control.Monad.Trans.Writer.Strict as StrictWriter
-import qualified System.Random                     as Random
-import qualified Data.Foldable                     as F
+import qualified Data.Foldable as F
 import Data.Word (Word64)
+import qualified System.Random as Random
 
 #if MIN_VERSION_base(4,8,0)
 #else
@@ -79,7 +75,7 @@ import           Data.Monoid                       (Monoid)
 
 -- | With a source of random number supply in hand, the 'MonadRandom' class
 -- allows the programmer to extract random values of a variety of types.
-class (Monad m) => MonadRandom m where
+class Monad m => MonadRandom m where
   -- | Takes a range /(lo,hi)/ and a random number generator
   -- /g/, and returns a computation that returns a random value uniformly
   -- distributed in the closed interval /[lo,hi]/, together with a new
@@ -89,7 +85,7 @@ class (Monad m) => MonadRandom m where
   -- interval.
   --
   -- See 'System.Random.randomR' for details.
-  getRandomR :: (Random.Random a) => (a, a) -> m a
+  getRandomR :: Random.Random a => (a, a) -> m a
 
   -- | The same as 'getRandomR', but using a default range determined by the type:
   --
@@ -102,91 +98,91 @@ class (Monad m) => MonadRandom m where
   -- * For 'Integer', the range is (arbitrarily) the range of 'Int'.
   --
   -- See 'System.Random.random' for details.
-  getRandom :: (Random.Random a) => m a
+  getRandom :: Random.Random a => m a
 
   -- | Plural variant of 'getRandomR', producing an infinite list of
   -- random values instead of returning a new generator.
   --
   -- See 'System.Random.randomRs' for details.
-  getRandomRs :: (Random.Random a) => (a, a) -> m [a]
+  getRandomRs :: Random.Random a => (a, a) -> m [a]
 
   -- | Plural variant of 'getRandom', producing an infinite list of
   -- random values instead of returning a new generator.
   --
   -- See 'System.Random.randoms' for details.
-  getRandoms :: (Random.Random a) => m [a]
+  getRandoms :: Random.Random a => m [a]
 
 instance MonadRandom IO where
-  getRandomR       = Random.randomRIO
-  getRandom        = Random.randomIO
+  getRandomR = Random.randomRIO
+  getRandom = Random.randomIO
   getRandomRs lohi = liftM (Random.randomRs lohi) Random.newStdGen
-  getRandoms       = liftM Random.randoms Random.newStdGen
+  getRandoms = liftM Random.randoms Random.newStdGen
 
-instance (MonadRandom m) => MonadRandom (ContT r m) where
-  getRandomR  = lift . getRandomR
-  getRandom   = lift getRandom
+instance MonadRandom m => MonadRandom (ContT r m) where
+  getRandomR = lift . getRandomR
+  getRandom = lift getRandom
   getRandomRs = lift . getRandomRs
-  getRandoms  = lift getRandoms
+  getRandoms = lift getRandoms
 
-instance (MonadRandom m) => MonadRandom (ExceptT e m) where
-  getRandomR  = lift . getRandomR
-  getRandom   = lift getRandom
+instance MonadRandom m => MonadRandom (ExceptT e m) where
+  getRandomR = lift . getRandomR
+  getRandom = lift getRandom
   getRandomRs = lift . getRandomRs
-  getRandoms  = lift getRandoms
+  getRandoms = lift getRandoms
 
-instance (MonadRandom m) => MonadRandom (IdentityT m) where
-  getRandomR  = lift . getRandomR
-  getRandom   = lift getRandom
+instance MonadRandom m => MonadRandom (IdentityT m) where
+  getRandomR = lift . getRandomR
+  getRandom = lift getRandom
   getRandomRs = lift . getRandomRs
-  getRandoms  = lift getRandoms
+  getRandoms = lift getRandoms
 
-instance (MonadRandom m) => MonadRandom (MaybeT m) where
-  getRandomR  = lift . getRandomR
-  getRandom   = lift getRandom
+instance MonadRandom m => MonadRandom (MaybeT m) where
+  getRandomR = lift . getRandomR
+  getRandom = lift getRandom
   getRandomRs = lift . getRandomRs
-  getRandoms  = lift getRandoms
+  getRandoms = lift getRandoms
 
 instance (Monoid w, MonadRandom m) => MonadRandom (LazyRWS.RWST r w s m) where
-  getRandomR  = lift . getRandomR
-  getRandom   = lift getRandom
+  getRandomR = lift . getRandomR
+  getRandom = lift getRandom
   getRandomRs = lift . getRandomRs
-  getRandoms  = lift getRandoms
+  getRandoms = lift getRandoms
 
 instance (Monoid w, MonadRandom m) => MonadRandom (StrictRWS.RWST r w s m) where
-  getRandomR  = lift . getRandomR
-  getRandom   = lift getRandom
+  getRandomR = lift . getRandomR
+  getRandom = lift getRandom
   getRandomRs = lift . getRandomRs
-  getRandoms  = lift getRandoms
+  getRandoms = lift getRandoms
 
-instance (MonadRandom m) => MonadRandom (ReaderT r m) where
-  getRandomR  = lift . getRandomR
-  getRandom   = lift getRandom
+instance MonadRandom m => MonadRandom (ReaderT r m) where
+  getRandomR = lift . getRandomR
+  getRandom = lift getRandom
   getRandomRs = lift . getRandomRs
-  getRandoms  = lift getRandoms
+  getRandoms = lift getRandoms
 
-instance (MonadRandom m) => MonadRandom (LazyState.StateT s m) where
-  getRandomR  = lift . getRandomR
-  getRandom   = lift getRandom
+instance MonadRandom m => MonadRandom (LazyState.StateT s m) where
+  getRandomR = lift . getRandomR
+  getRandom = lift getRandom
   getRandomRs = lift . getRandomRs
-  getRandoms  = lift getRandoms
+  getRandoms = lift getRandoms
 
-instance (MonadRandom m) => MonadRandom (StrictState.StateT s m) where
-  getRandomR  = lift . getRandomR
-  getRandom   = lift getRandom
+instance MonadRandom m => MonadRandom (StrictState.StateT s m) where
+  getRandomR = lift . getRandomR
+  getRandom = lift getRandom
   getRandomRs = lift . getRandomRs
-  getRandoms  = lift getRandoms
+  getRandoms = lift getRandoms
 
 instance (MonadRandom m, Monoid w) => MonadRandom (LazyWriter.WriterT w m) where
-  getRandomR  = lift . getRandomR
-  getRandom   = lift getRandom
+  getRandomR = lift . getRandomR
+  getRandom = lift getRandom
   getRandomRs = lift . getRandomRs
-  getRandoms  = lift getRandoms
+  getRandoms = lift getRandoms
 
 instance (MonadRandom m, Monoid w) => MonadRandom (StrictWriter.WriterT w m) where
-  getRandomR  = lift . getRandomR
-  getRandom   = lift getRandom
+  getRandomR = lift . getRandomR
+  getRandom = lift getRandom
   getRandomRs = lift . getRandomRs
-  getRandoms  = lift getRandoms
+  getRandoms = lift getRandoms
 
 ------------------------------------------------------------
 -- MonadSplit
@@ -199,8 +195,7 @@ instance (MonadRandom m, Monoid w) => MonadRandom (StrictWriter.WriterT w m) whe
 --   actually do anything with a generator.  It remains here to avoid
 --   breaking existing code unnecessarily.  For a more practically
 --   useful interface, see 'MonadInterleave'.
-class (Monad m) => MonadSplit g m | m -> g where
-
+class Monad m => MonadSplit g m | m -> g where
   -- | The 'getSplit' operation allows one to obtain two distinct random number
   -- generators.
   --
@@ -210,16 +205,16 @@ class (Monad m) => MonadSplit g m | m -> g where
 instance MonadSplit Random.StdGen IO where
   getSplit = Random.newStdGen
 
-instance (MonadSplit g m) => MonadSplit g (ContT r m) where
+instance MonadSplit g m => MonadSplit g (ContT r m) where
   getSplit = lift getSplit
 
-instance (MonadSplit g m) => MonadSplit g (ExceptT e m) where
+instance MonadSplit g m => MonadSplit g (ExceptT e m) where
   getSplit = lift getSplit
 
-instance (MonadSplit g m) => MonadSplit g (IdentityT m) where
+instance MonadSplit g m => MonadSplit g (IdentityT m) where
   getSplit = lift getSplit
 
-instance (MonadSplit g m) => MonadSplit g (MaybeT m) where
+instance MonadSplit g m => MonadSplit g (MaybeT m) where
   getSplit = lift getSplit
 
 instance (Monoid w, MonadSplit g m) => MonadSplit g (LazyRWS.RWST r w s m) where
@@ -228,13 +223,13 @@ instance (Monoid w, MonadSplit g m) => MonadSplit g (LazyRWS.RWST r w s m) where
 instance (Monoid w, MonadSplit g m) => MonadSplit g (StrictRWS.RWST r w s m) where
   getSplit = lift getSplit
 
-instance (MonadSplit g m) => MonadSplit g (ReaderT r m) where
+instance MonadSplit g m => MonadSplit g (ReaderT r m) where
   getSplit = lift getSplit
 
-instance (MonadSplit g m) => MonadSplit g (LazyState.StateT s m) where
+instance MonadSplit g m => MonadSplit g (LazyState.StateT s m) where
   getSplit = lift getSplit
 
-instance (MonadSplit g m) => MonadSplit g (StrictState.StateT s m) where
+instance MonadSplit g m => MonadSplit g (StrictState.StateT s m) where
   getSplit = lift getSplit
 
 instance (Monoid w, MonadSplit g m) => MonadSplit g (LazyWriter.WriterT w m) where
@@ -250,7 +245,6 @@ instance (Monoid w, MonadSplit g m) => MonadSplit g (StrictWriter.WriterT w m) w
 -- | The class 'MonadInterleave' proivides a convenient interface atop
 --   a 'split' operation on a random generator.
 class MonadRandom m => MonadInterleave m where
-
   -- | If @x :: m a@ is a computation in some random monad, then
   --   @interleave x@ works by splitting the generator, running @x@
   --   using one half, and using the other half as the final generator
@@ -295,16 +289,16 @@ class MonadRandom m => MonadInterleave m where
   --   > Node 8243316398511136358 (Node 4139784028141790719 Leaf Leaf) (Node 4473998613878251948 Leaf Leaf)
   interleave :: m a -> m a
 
-instance (MonadInterleave m) => MonadInterleave (ContT r m) where
+instance MonadInterleave m => MonadInterleave (ContT r m) where
   interleave = mapContT interleave
 
-instance (MonadInterleave m) => MonadInterleave (ExceptT e m) where
+instance MonadInterleave m => MonadInterleave (ExceptT e m) where
   interleave = mapExceptT interleave
 
-instance (MonadInterleave m) => MonadInterleave (IdentityT m) where
+instance MonadInterleave m => MonadInterleave (IdentityT m) where
   interleave = mapIdentityT interleave
 
-instance (MonadInterleave m) => MonadInterleave (MaybeT m) where
+instance MonadInterleave m => MonadInterleave (MaybeT m) where
   interleave = mapMaybeT interleave
 
 instance (Monoid w, MonadInterleave m) => MonadInterleave (LazyRWS.RWST r w s m) where
@@ -313,13 +307,13 @@ instance (Monoid w, MonadInterleave m) => MonadInterleave (LazyRWS.RWST r w s m)
 instance (Monoid w, MonadInterleave m) => MonadInterleave (StrictRWS.RWST r w s m) where
   interleave = StrictRWS.mapRWST interleave
 
-instance (MonadInterleave m) => MonadInterleave (ReaderT r m) where
+instance MonadInterleave m => MonadInterleave (ReaderT r m) where
   interleave = mapReaderT interleave
 
-instance (MonadInterleave m) => MonadInterleave (LazyState.StateT s m) where
+instance MonadInterleave m => MonadInterleave (LazyState.StateT s m) where
   interleave = LazyState.mapStateT interleave
 
-instance (MonadInterleave m) => MonadInterleave (StrictState.StateT s m) where
+instance MonadInterleave m => MonadInterleave (StrictState.StateT s m) where
   interleave = StrictState.mapStateT interleave
 
 instance (Monoid w, MonadInterleave m) => MonadInterleave (LazyWriter.WriterT w m) where
@@ -340,7 +334,7 @@ weighted t = do
   ma <- weightedMay t
   case ma of
     Nothing -> error "Control.Monad.Random.Class.weighted: empty collection, or total weight <= 0"
-    Just a  -> return a
+    Just a -> return a
 
 -- | Sample a random value from a weighted collection of elements.
 --   Returns @Nothing@ if the collection is empty or the total weight is
@@ -350,12 +344,12 @@ weightedMay = fromListMay . F.toList
 
 -- | Sample a random value from a weighted list.  The list must be
 --   non-empty and the total weight must be non-zero.
-fromList :: (MonadRandom m) => [(a, Rational)] -> m a
+fromList :: MonadRandom m => [(a, Rational)] -> m a
 fromList ws = do
   ma <- fromListMay ws
   case ma of
     Nothing -> error "Control.Monad.Random.Class.fromList: empty list, or total weight = 0"
-    Just a  -> return a
+    Just a -> return a
 
 -- | Sample a random value from a weighted list.  Return @Nothing@ if
 --   the list is empty or the total weight is nonpositive.
@@ -376,7 +370,7 @@ uniform t = do
   ma <- uniformMay t
   case ma of
     Nothing -> error "Control.Monad.Random.Class.uniform: empty collection"
-    Just a  -> return a
+    Just a -> return a
 
 -- | Sample a value uniformly from a collection of elements.  Return
 --   @Nothing@ if the collection is empty.
