@@ -383,6 +383,9 @@ uniformMay = fromListMay . map (flip (,) 1) . F.toList
 
 ------------------------------------------------------------
 
+-- The old implementation of `fromListMay`, for comparison.  See
+-- https://github.com/byorgey/MonadRandom/issues/53 and
+-- https://byorgey.github.io/blog/posts/2024/10/14/MonadRandom-version-bump.html
 fromListMayOld :: MonadRandom m => [(a, Rational)] -> m (Maybe a)
 fromListMayOld xs = do
   let s = fromRational (sum (map snd xs)) :: Double

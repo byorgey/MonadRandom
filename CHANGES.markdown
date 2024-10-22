@@ -1,3 +1,15 @@
+0.6.1 (22 October 2024)
+-----------------------
+
+- Fix the potential for a crash in `fromListMay` (and hence also in
+  functions that use it, namely `fromList`, `weighted`, `weightedMay`,
+  `uniform`, and `uniformMay`). Thanks to @Flupp for pointing out the
+  issue and suggesting a fix.  The fix may in theory cause these
+  functions, extremely rarely, to output values different from the old
+  values for the same seed.  See
+  https://byorgey.github.io/blog/posts/2024/10/14/MonadRandom-version-bump.html
+  for more information and discussion.
+
 0.6 (5 Nov 2022)
 ----------------
 
@@ -15,7 +27,7 @@
 
 - `StatefulGen` instances for `RandT`
 - Addition of `RandGen`
-- Additioon of `withRandGen` and `withRandGen_`
+- Addition of `withRandGen` and `withRandGen_`
 
 - r1 (28 April 2021): require `base >= 4.6`
 - r2 (9 Aug 2021): allow `transformers-compat-0.7`.
