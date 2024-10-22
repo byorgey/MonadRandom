@@ -380,3 +380,15 @@ uniform t = do
 --   @Nothing@ if the collection is empty.
 uniformMay :: (F.Foldable t, MonadRandom m) => t a -> m (Maybe a)
 uniformMay = fromListMay . map (flip (,) 1) . F.toList
+
+------------------------------------------------------------
+
+fromListMayOld :: MonadRandom m => [(a, Rational)] -> m (Maybe a)
+fromListMayOld xs = do
+  let s = fromRational (sum (map snd xs)) :: Double
+      cums = scanl1 (\ ~(_, q) ~(y, s') -> (y, s' + q)) xs
+  if s <= 0
+    then return Nothing
+    else do
+      p <- liftM toRational $ getRandomR (0, s)
+      return . Just . fst . head . dropWhile ((< p) . snd) $ cums
