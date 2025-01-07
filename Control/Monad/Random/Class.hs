@@ -366,7 +366,7 @@ fromListMay xs = do
       -- Subtract from 1 to match the way uniform Double values are
       -- generated, and hence match the old behavior of this function.
       let p = s * (1 - toRational (w :: Word64) / toRational (maxBound :: Word64))
-      return . Just . fst . head . dropWhile ((< p) . snd) $ cums
+      return . fmap fst . F.find ((>= p) . snd) $ cums
 
 -- | Sample a value uniformly from a nonempty collection of elements.
 uniform :: (F.Foldable t, MonadRandom m) => t a -> m a
@@ -386,12 +386,12 @@ uniformMay = fromListMay . map (flip (,) 1) . F.toList
 -- The old implementation of `fromListMay`, for comparison.  See
 -- https://github.com/byorgey/MonadRandom/issues/53 and
 -- https://byorgey.github.io/blog/posts/2024/10/14/MonadRandom-version-bump.html
-fromListMayOld :: MonadRandom m => [(a, Rational)] -> m (Maybe a)
-fromListMayOld xs = do
+_fromListMayOld :: MonadRandom m => [(a, Rational)] -> m (Maybe a)
+_fromListMayOld xs = do
   let s = fromRational (sum (map snd xs)) :: Double
       cums = scanl1 (\ ~(_, q) ~(y, s') -> (y, s' + q)) xs
   if s <= 0
     then return Nothing
     else do
       p <- liftM toRational $ getRandomR (0, s)
-      return . Just . fst . head . dropWhile ((< p) . snd) $ cums
+      return . fmap fst . F.find ((>= p) . snd) $ cums
