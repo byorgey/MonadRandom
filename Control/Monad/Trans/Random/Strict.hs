@@ -278,18 +278,19 @@ evalRandTIO t = liftIO newStdGen >>= evalRandT t
 -- @since 0.5.3
 data RandGen g = RandGen
 
-#if MIN_VERSION_random(1,2,0)
 -- |
 --
 -- @since 0.5.3
 instance (Monad m, RandomGen g) => StatefulGen (RandGen g) (RandT g m) where
-  uniformWord32R r = applyRandT (genWord32R r)
-  uniformWord64R r = applyRandT (genWord64R r)
-  uniformWord8 = applyRandT genWord8
-  uniformWord16 = applyRandT genWord16
-  uniformWord32 = applyRandT genWord32
   uniformWord64 = applyRandT genWord64
-  uniformShortByteString n = applyRandT (genShortByteString n)
+
+newtype PureRandGen g = PureRandGen g
+  deriving (RandomGen, SplitGen)
+
+instance (Monad m, RandomGen g) => FrozenGen (PureRandGen g) (RandT g m) where
+  type MutableGen (PureRandGen g) (RandT g m) = RandGen g
+  freezeGen _ = liftRandT $ \g -> pure (PureRandGen g, g)
+  overwriteGen _ (PureRandGen g) = liftRandT $ \_ -> pure ((), g)
 
 -- |
 --
@@ -299,7 +300,6 @@ instance (Monad m, RandomGen g) => RandomGenM (RandGen g) g (RandT g m) where
 
 applyRandT :: Applicative m => (g -> (a, g)) -> RandGen g -> RandT g m a
 applyRandT f _ = liftRandT (pure . f)
-#endif
 
 -- | A `RandT` runner that allows using it with `StatefulGen` restricted actions. Returns
 -- the outcome of random computation and the new pseudo-random-number generator
