@@ -290,6 +290,9 @@ instance (Monad m, RandomGen g) => StatefulGen (RandGen g) (RandT g m) where
   uniformWord32 = applyRandT genWord32
   uniformWord64 = applyRandT genWord64
   uniformShortByteString n = applyRandT (genShortByteString n)
+#if MIN_VERSION_random(1,3,0)
+  uniformByteArrayM pinned sz = applyRandT $ uniformByteArray pinned sz
+#endif
 
 -- |
 --
