@@ -1,5 +1,5 @@
 name:                MonadRandom
-version:             0.6.1
+version:             0.6.2
 synopsis:            Random-number generation monad.
 description:         Support for computations which consume random values.
 license:             BSD3
