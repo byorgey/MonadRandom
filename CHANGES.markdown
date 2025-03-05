@@ -1,3 +1,9 @@
+0.6.2 (5 March 2025)
+--------------------
+
+- Support `random-1.3`.  Thanks to @bgamari and @lehins for help
+  making the necessary updates.
+
 0.6.1 (22 October 2024)
 -----------------------
 
