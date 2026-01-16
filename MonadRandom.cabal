@@ -15,7 +15,7 @@ tested-with:         GHC ==8.0.2 || ==8.2.2 || ==8.4.4 || ==8.6.5 || ==8.8.4 || 
 
 source-repository head
   type:     git
-  location: git://github.com/byorgey/MonadRandom.git
+  location: https://github.com/byorgey/MonadRandom
 
 library
   exposed-modules:
@@ -29,7 +29,6 @@ library
   build-depends:
     base                >=4.8 && <5,
     transformers        >=0.5 && <0.7,
-    transformers-compat >=0.4 && <0.9,
     mtl                 >=2.2.1 && <2.3 || >= 2.3.1 && < 2.4,
     primitive           >=0.6 && <0.10,
     random              >=1.0.1 && <1.4
