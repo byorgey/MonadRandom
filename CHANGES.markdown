@@ -1,3 +1,10 @@
+0.6.2.1 (19 January 2026)
+-------------------------
+
+- Test with GHC 9.14
+- Drop support for GHC < 8
+- Drop `transformers-compat` dependency
+
 0.6.2 (5 March 2025)
 --------------------
 
